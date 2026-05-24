@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors");
+const path = require("path");
 const dotenv = require("dotenv");
 const OpenAI = require("openai");
 
@@ -7,11 +7,15 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+});
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.post("/rewrite", async (req, res) => {
@@ -19,13 +23,15 @@ app.post("/rewrite", async (req, res) => {
     const { text, tone } = req.body;
 
     const prompt = `
-Rewrite this professionally in a ${tone} tone:
+Rewrite this message in a ${tone} tone.
+Keep meaning same but improve grammar, clarity, and professionalism.
 
+Message:
 ${text}
 `;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "user",
@@ -39,13 +45,14 @@ ${text}
     });
   } catch (err) {
     console.error(err);
-
     res.status(500).json({
-      error: "Something went wrong",
+      error: "Rewrite failed",
     });
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
