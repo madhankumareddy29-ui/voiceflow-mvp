@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoiceFlow MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">AI Voice Typing MVP</p>
+        <h1>Speak messy. Get polished text.</h1>
+        <p class="subtitle">Record your voice, clean filler words, and copy ready-to-send text for ChatGPT, Gmail, Slack, VS Code, ServiceNow, and more.</p>
+      </div>
+      <div class="badge">Copied to clipboard automatically</div>
+    </section>
+
+    <section class="panel controls">
+      <label>
+        Tone
+        <select id="tone">
+          <option value="professional">Professional</option>
+          <option value="email">Email</option>
+          <option value="short">Short</option>
+          <option value="developer">Developer / Ticket Update</option>
+          <option value="casual">Casual</option>
+        </select>
+      </label>
+
+      <div class="button-row">
+        <button id="startBtn" class="primary">Start Recording</button>
+        <button id="stopBtn" class="danger" disabled>Stop & Transcribe</button>
+        <button id="copyBtn" disabled>Copy Polished Text</button>
+      </div>
+
+      <p id="status" class="status">Ready. Click Start Recording and speak naturally.</p>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Raw Transcript</h2>
+        <textarea id="rawText" placeholder="Your raw speech transcription will appear here..."></textarea>
+      </article>
+
+      <article class="panel polished-panel">
+        <h2>Polished Output</h2>
+        <textarea id="polishedText" placeholder="Clean ready-to-send text will appear here..."></textarea>
+      </article>
+    </section>
+
+    <section class="panel examples">
+      <h2>Example use cases</h2>
+      <div class="chips">
+        <span>ServiceNow update</span>
+        <span>Slack message</span>
+        <span>Email reply</span>
+        <span>ChatGPT prompt</span>
+        <span>Developer notes</span>
+        <span>LinkedIn message</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

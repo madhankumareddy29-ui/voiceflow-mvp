@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VoiceFlow MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body{
+      font-family: Arial,sans-serif;
+      background:#0f172a;
+      color:white;
+      margin:0;
+      padding:20px;
+    }
+
+    body.light{
+      background:#f3f4f6;
+      color:#111827;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      background:#1e293b;
+      padding:25px;
+      border-radius:18px;
+    }
+
+    body.light .container{
+      background:white;
+    }
+
+    h1{
+      font-size:54px;
+      margin-bottom:10px;
+    }
+
+    p{
+      color:#cbd5e1;
+      font-size:18px;
+    }
+
+    body.light p{
+      color:#374151;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
+    }
+
+    button{
+      border:none;
+      padding:16px 24px;
+      border-radius:14px;
+      cursor:pointer;
+      font-size:17px;
+      font-weight:bold;
+      color:white;
+    }
+
+    .blue{ background:#2563eb; }
+    .red{ background:#dc2626; }
+    .green{ background:#16a34a; }
+    .purple{ background:#7c3aed; }
+    .gray{ background:#64748b; }
+    .gold{ background:#f59e0b; color:#111827; }
+
+    select{
+      padding:14px;
+      border-radius:12px;
+      font-size:17px;
+      min-width:250px;
+    }
+
+    textarea{
+      width:100%;
+      height:320px;
+      margin-top:20px;
+      border-radius:16px;
+      padding:20px;
+      font-size:18px;
+      line-height:1.7;
+      box-sizing:border-box;
+      border:none;
+      resize:vertical;
+    }
+
+    #status{
+      margin-top:20px;
+      font-size:18px;
+      font-weight:bold;
+      color:#93c5fd;
+    }
+
+    .usage{
+      margin-top:15px;
+      font-size:16px;
+      color:#cbd5e1;
+    }
+
+    .pricing{
+      margin-top:25px;
+      padding:18px;
+      border-radius:14px;
+      background:#334155;
+    }
+
+    body.light .pricing{
+      background:#e5e7eb;
+    }
+
+    .history{
+      margin-top:30px;
+    }
+
+    .history-item{
+      background:#334155;
+      padding:12px;
+      border-radius:10px;
+      margin-bottom:10px;
+      cursor:pointer;
+    }
+
+    body.light .history-item{
+      background:#e5e7eb;
+      color:black;
+    }
+
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.75);
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .modal-box{
+      background:#1e293b;
+      padding:30px;
+      border-radius:20px;
+      max-width:450px;
+      text-align:center;
+    }
+
+    body.light .modal-box{
+      background:white;
+      color:#111827;
+    }
+
+    @media(max-width:768px){
+      h1{ font-size:36px; }
+      button, select{ width:100%; }
+      .controls{ flex-direction:column; }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🎙️ VoiceFlow MVP</h1>
+  <p>Speak in your language. Get clean professional English instantly.</p>
+
+  <div class="controls">
+    <button class="blue" onclick="startRecording()">Start Recording</button>
+    <button class="red" onclick="stopRecording()">Stop</button>
+    <button class="green" onclick="cleanText()">Clean Text</button>
+    <button class="purple" onclick="professionalRewrite()">AI Rewrite</button>
+    <button class="gray" onclick="copyText()">Copy Text</button>
+    <button class="gray" onclick="toggleTheme()">Toggle Theme</button>
+    <button class="gold" onclick="openUpgrade()">Upgrade to Pro</button>
+  </div>
+
+  <div class="controls">
+    <select id="language">
+      <option value="en-US">English - US</option>
+      <option value="te-IN">Telugu - India</option>
+      <option value="hi-IN">Hindi - India</option>
+      <option value="ta-IN">Tamil - India</option>
+      <option value="kn-IN">Kannada - India</option>
+      <option value="ml-IN">Malayalam - India</option>
+      <option value="mr-IN">Marathi - India</option>
+      <option value="bn-IN">Bengali - India</option>
+      <option value="gu-IN">Gujarati - India</option>
+      <option value="pa-IN">Punjabi - India</option>
+      <option value="es-ES">Spanish</option>
+      <option value="fr-FR">French</option>
+      <option value="de-DE">German</option>
+      <option value="ja-JP">Japanese</option>
+      <option value="zh-CN">Chinese</option>
+      <option value="ar-SA">Arabic</option>
+    </select>
+
+    <select id="tone">
+      <option value="Professional">Professional</option>
+      <option value="Casual">Casual</option>
+      <option value="Executive">Executive</option>
+      <option value="Email">Email</option>
+    </select>
+  </div>
+
+  <div class="usage" id="usage"></div>
+
+  <div id="status">Ready</div>
+
+  <textarea id="output" placeholder="Your voice text will appear here..."></textarea>
+
+  <div class="pricing">
+    <h2>Pricing</h2>
+    <p><b>Free:</b> 5 rewrites/day, Professional tone only, limited history.</p>
+    <p><b>Pro:</b> $7/month, unlimited rewrites, all tones, multilingual support, unlimited history.</p>
+  </div>
+
+  <div class="history">
+    <h2>History</h2>
+    <div id="historyList"></div>
+  </div>
+
+</div>
+
+<div class="modal" id="upgradeModal">
+  <div class="modal-box">
+    <h2>Upgrade to Pro 🚀</h2>
+    <p>You reached the free limit.</p>
+    <p><b>$7/month</b></p>
+    <p>Unlimited rewrites, all tones, multilingual support, and unlimited history.</p>
+    <button class="gold" onclick="alert('Stripe payment coming next')">Upgrade Now</button>
+    <button class="gray" onclick="closeUpgrade()">Close</button>
+  </div>
+</div>
+
+<script>
+const FREE_LIMIT = 5;
+let recognition;
+let isPro = localStorage.getItem("isPro") === "true";
+let rewriteCount = Number(localStorage.getItem("rewriteCount") || 0);
+
+updateUsage();
+loadHistory();
+
+function startRecording(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+    alert("Speech recognition not supported. Use Chrome.");
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = document.getElementById("language").value;
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    document.getElementById("status").innerText = "Listening...";
+  };
+
+  recognition.onresult = (event) => {
+    let transcript = "";
+
+    for(let i = 0; i < event.results.length; i++){
+      transcript += event.results[i][0].transcript + " ";
+    }
+
+    document.getElementById("output").value = transcript;
+  };
+
+  recognition.start();
+}
+
+function stopRecording(){
+  if(recognition){
+    recognition.stop();
+  }
+
+  document.getElementById("status").innerText = "Recording stopped";
+}
+
+function cleanText(){
+  const cleaned = document.getElementById("output").value
+    .replace(/\s+/g," ")
+    .trim();
+
+  document.getElementById("output").value = cleaned;
+  document.getElementById("status").innerText = "Text cleaned";
+}
+
+async function professionalRewrite(){
+  if(!isPro && rewriteCount >= FREE_LIMIT){
+    openUpgrade();
+    return;
+  }
+
+  const text = document.getElementById("output").value.trim();
+  const tone = document.getElementById("tone").value;
+
+  if(!text){
+    alert("Please speak or type something first.");
+    return;
+  }
+
+  if(!isPro && tone !== "Professional"){
+    alert("Free plan only supports Professional tone. Upgrade to Pro for all tones.");
+    document.getElementById("tone").value = "Professional";
+    return;
+  }
+
+  document.getElementById("status").innerText = "AI rewriting...";
+
+  try{
+    const response = await fetch("http://localhost:3000/rewrite",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ text, tone })
+    });
+
+    const data = await response.json();
+
+    if(!data.result){
+      throw new Error(data.error || "No result");
+    }
+
+    document.getElementById("output").value = data.result;
+    document.getElementById("status").innerText = "AI rewrite complete!";
+
+    if(!isPro){
+      rewriteCount++;
+      localStorage.setItem("rewriteCount", rewriteCount);
+      updateUsage();
+    }
+
+    saveHistory(data.result);
+  }catch(err){
+    document.getElementById("status").innerText = "AI rewrite failed. Check server.";
+  }
+}
+
+function copyText(){
+  navigator.clipboard.writeText(document.getElementById("output").value);
+  document.getElementById("status").innerText = "Copied!";
+}
+
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+
+function updateUsage(){
+  if(isPro){
+    document.getElementById("usage").innerText = "Pro Plan: Unlimited rewrites";
+  }else{
+    document.getElementById("usage").innerText =
+      "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
+  }
+}
+
+function openUpgrade(){
+  document.getElementById("upgradeModal").style.display = "flex";
+}
+
+function closeUpgrade(){
+  document.getElementById("upgradeModal").style.display = "none";
+}
+
+function saveHistory(text){
+  let history = JSON.parse(localStorage.getItem("history") || "[]");
+
+  history.unshift(text);
+
+  history = history.slice(0, isPro ? 100 : 5);
+
+  localStorage.setItem("history", JSON.stringify(history));
+  loadHistory();
+}
+
+function loadHistory(){
+  const history = JSON.parse(localStorage.getItem("history") || "[]");
+  const list = document.getElementById("historyList");
+
+  list.innerHTML = "";
+
+  history.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerText = item.substring(0, 150);
+    div.onclick = () => {
+      document.getElementById("output").value = item;
+    };
+    list.appendChild(div);
+  });
+}
+</script>
+
+</body>
+</html>
