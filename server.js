@@ -23,8 +23,20 @@ app.post("/rewrite", async (req, res) => {
     const { text, tone } = req.body;
 
     const prompt = `
-Rewrite this message in a ${tone} tone.
-Keep meaning same but improve grammar, clarity, and professionalism.
+You are a smart communication assistant.
+
+Rewrite the following message into natural, clean, human professional English.
+
+Rules:
+- Keep it short and realistic
+- Sound like a real human
+- Do NOT sound robotic
+- Keep the original meaning
+- Make it workplace-friendly
+- Avoid overly formal greetings
+- Do not add extra meaning
+
+Tone: ${tone}
 
 Message:
 ${text}
@@ -41,7 +53,7 @@ ${text}
     });
 
     res.json({
-      result: completion.choices[0].message.content,
+      result: completion.choices[0].message.content.trim(),
     });
   } catch (err) {
     console.error(err);
