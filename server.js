@@ -25,30 +25,36 @@ app.post("/rewrite", async (req, res) => {
     let toneInstruction = "";
 
     if (tone === "Professional") {
-      toneInstruction = "Use clean professional workplace English.";
+      toneInstruction = "Sound professional, clear, workplace-friendly, and polished.";
     } else if (tone === "Casual") {
-      toneInstruction = "Make it friendly and natural like texting a friend.";
+      toneInstruction = "Sound casual, friendly, relaxed, and natural like texting a coworker.";
+    } else if (tone === "Executive") {
+      toneInstruction = "Sound concise, confident, executive-level, and direct.";
     } else if (tone === "Polite") {
-      toneInstruction = "Make it extra polite and respectful.";
+      toneInstruction = "Make it extra polite, respectful, and warm.";
     } else if (tone === "Concise") {
-      toneInstruction = "Keep it very short and direct.";
+      toneInstruction = "Keep it very short, clear, and direct.";
     } else if (tone === "Gen Z") {
-      toneInstruction = "Use modern Gen Z texting style naturally.";
+      toneInstruction = "Use modern Gen Z texting style naturally, but keep it understandable.";
+    } else {
+      toneInstruction = "Use clean, natural, human English.";
     }
 
     const prompt = `
 You are a smart communication assistant.
 
-Rewrite the following message into natural human English.
-
-Rules:
-- Keep original meaning
-- Do NOT sound robotic
-- Sound realistic and natural
-- Avoid overly formal wording
-- Make it easy to read
+Rewrite the message into natural human English.
 
 ${toneInstruction}
+
+Rules:
+- Keep the original meaning
+- Do not add new meaning
+- Avoid robotic language
+- Keep it realistic
+- Do not overcomplicate
+- Make it sound naturally written by a human
+- Return only the rewritten message, no explanation
 
 Message:
 ${text}
