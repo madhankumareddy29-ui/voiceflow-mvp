@@ -36,6 +36,8 @@ app.post("/rewrite", async (req, res) => {
       toneInstruction = "Keep it very short, clear, and direct.";
     } else if (tone === "Gen Z") {
       toneInstruction = "Use modern Gen Z texting style naturally, but keep it understandable.";
+    } else if (tone === "Email") {
+      toneInstruction = "Rewrite it like a clean professional email. Include greeting and closing only if useful.";
     } else {
       toneInstruction = "Use clean, natural, human English.";
     }
