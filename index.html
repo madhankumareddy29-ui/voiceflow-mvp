@@ -314,7 +314,7 @@ async function professionalRewrite(){
   document.getElementById("status").innerText = "AI rewriting...";
 
   try{
-    const response = await fetch("http://localhost:3000/rewrite",{
+    const response = await fetch("https://voiceflow-mvp.onrender.com/rewrite",{
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({ text, tone })
