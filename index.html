@@ -699,7 +699,7 @@ window.startRecording = async function(){
 
       const audioBlob =
         new Blob(audioChunks,{
-          type:"audio/webm"
+          type:"audio/wav"
         });
 
       const formData =
@@ -708,7 +708,7 @@ window.startRecording = async function(){
       formData.append(
         "audio",
         audioBlob,
-        "voice.webm"
+        "voice.wav"
       );
 
       try{
