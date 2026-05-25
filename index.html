@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-
   <title>VoiceFlow AI</title>
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <style>
-
     body{
       font-family:Arial,sans-serif;
       background:#0f172a;
@@ -52,37 +46,14 @@
       font-size:18px;
       font-weight:bold;
       color:white;
-      transition:0.2s;
     }
 
-    button:hover{
-      transform:scale(1.03);
-    }
-
-    .blue{
-      background:#2563eb;
-    }
-
-    .red{
-      background:#dc2626;
-    }
-
-    .green{
-      background:#16a34a;
-    }
-
-    .purple{
-      background:#7c3aed;
-    }
-
-    .gray{
-      background:#64748b;
-    }
-
-    .gold{
-      background:#f59e0b;
-      color:black;
-    }
+    .blue{ background:#2563eb; }
+    .red{ background:#dc2626; }
+    .green{ background:#16a34a; }
+    .purple{ background:#7c3aed; }
+    .gray{ background:#64748b; }
+    .gold{ background:#f59e0b; color:black; }
 
     select{
       padding:16px;
@@ -186,14 +157,7 @@
       text-align:center;
       width:420px;
     }
-
-    .modal-box h2{
-      font-size:42px;
-      margin-top:0;
-    }
-
   </style>
-
 </head>
 
 <body>
@@ -201,162 +165,58 @@
 <div class="container">
 
   <h1>🎙️ VoiceFlow AI</h1>
-
-  <p>
-    Speak naturally. Sound professional instantly.
-  </p>
+  <p>Speak naturally. Sound professional instantly.</p>
 
   <div class="controls">
+    <input id="email" placeholder="Email"/>
+    <input id="password" type="password" placeholder="Password"/>
 
-    <input
-      id="email"
-      placeholder="Email"
-    />
-
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-    />
-
-    <button
-      class="blue"
-      onclick="signup()"
-    >
-      Signup
-    </button>
-
-    <button
-      class="green"
-      onclick="login()"
-    >
-      Login
-    </button>
-
-    <button
-      class="red"
-      onclick="logout()"
-    >
-      Logout
-    </button>
-
+    <button class="blue" onclick="signup()">Signup</button>
+    <button class="green" onclick="login()">Login</button>
+    <button class="red" onclick="logout()">Logout</button>
   </div>
 
-  <div
-    id="userStatus"
-    style="margin-top:18px;font-size:20px;"
-  >
+  <div id="userStatus" style="margin-top:18px;font-size:20px;">
     Not logged in
   </div>
 
   <div class="controls">
-
-    <button
-      class="blue"
-      id="recordBtn"
-      onclick="startRecording()"
-    >
-      🎤 Start Recording
-    </button>
-
-    <button
-      class="red"
-      onclick="stopRecording()"
-    >
-      ⏹ Stop
-    </button>
-
-    <button
-      class="green"
-      onclick="cleanText()"
-    >
-      ✨ Clean Text
-    </button>
-
-    <button
-      class="purple"
-      onclick="professionalRewrite()"
-    >
-      ✨ AI Rewrite
-    </button>
-
-    <button
-      class="gray"
-      onclick="copyText()"
-    >
-      📋 Copy Text
-    </button>
-
-    <button
-      class="gold"
-      onclick="openUpgrade()"
-    >
-      🚀 Upgrade to Pro
-    </button>
-
+    <button class="blue" id="recordBtn" onclick="startRecording()">🎤 Start Recording</button>
+    <button class="red" onclick="stopRecording()">⏹ Stop</button>
+    <button class="green" onclick="cleanText()">✨ Clean Text</button>
+    <button class="purple" onclick="professionalRewrite()">✨ AI Rewrite</button>
+    <button class="gray" onclick="copyText()">📋 Copy Text</button>
+    <button class="gold" onclick="openUpgrade()">🚀 Upgrade to Pro</button>
   </div>
 
   <div class="controls">
-
     <select id="language">
       <option value="auto">🌍 Auto Detect</option>
     </select>
 
     <select id="tone">
-
-      <option value="Professional">
-        Professional
-      </option>
-
-      <option value="Casual">
-        Casual
-      </option>
-
-      <option value="Executive">
-        Executive
-      </option>
-
-      <option value="Polite">
-        Polite
-      </option>
-
-      <option value="Concise">
-        Concise
-      </option>
-
-      <option value="Gen Z">
-        Gen Z
-      </option>
-
-      <option value="Email">
-        Email
-      </option>
-
+      <option value="Professional">Professional</option>
+      <option value="Casual">Casual</option>
+      <option value="Executive">Executive</option>
+      <option value="Polite">Polite</option>
+      <option value="Concise">Concise</option>
+      <option value="Gen Z">Gen Z</option>
+      <option value="Email">Email</option>
     </select>
-
   </div>
 
-  <div
-    class="usage"
-    id="usage"
-  ></div>
+  <div class="usage" id="usage"></div>
 
-  <div id="status">
-    Ready
-  </div>
+  <div id="status">Ready</div>
 
   <textarea id="output"></textarea>
 
   <div class="history">
-
     <h2>Recent Rewrites</h2>
-
     <div id="historyList"></div>
-
   </div>
 
   <div class="pricing">
-
     <div class="price-card">
       <h3>Free</h3>
       <p>10 rewrites/day</p>
@@ -366,60 +226,29 @@
     <div class="price-card">
       <h3>Pro</h3>
       <p>$9/month</p>
-      <p>
-        Unlimited rewrites,
-        all tones,
-        history
-      </p>
+      <p>Unlimited rewrites, all tones, history</p>
     </div>
 
     <div class="price-card">
       <h3>Team</h3>
       <p>$29/month</p>
-      <p>
-        Team workspace,
-        shared history,
-        admin controls
-      </p>
+      <p>Team workspace, shared history, admin controls</p>
     </div>
-
   </div>
 
 </div>
 
-<div
-  class="modal"
-  id="upgradeModal"
->
-
+<div class="modal" id="upgradeModal">
   <div class="modal-box">
-
     <h2>Upgrade to Pro 🚀</h2>
-
-    <p>
-      You reached the free plan limit.
-    </p>
-
-    <button class="gold">
-      Upgrade Now
-    </button>
-
-    <button
-      class="gray"
-      onclick="closeUpgrade()"
-      style="margin-top:14px;"
-    >
-      Close
-    </button>
-
+    <p>You reached the free plan limit.</p>
+    <button class="gold">Upgrade Now</button>
+    <button class="gray" onclick="closeUpgrade()" style="margin-top:14px;">Close</button>
   </div>
-
 </div>
 
 <script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getAuth,
@@ -427,157 +256,108 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyA_h-rYvoL2dZs-9Q9cNdTQFfjAQpnfdII",
-
-  authDomain:
-    "voiceflow-ai-1c0e8.firebaseapp.com",
-
-  projectId:
-    "voiceflow-ai-1c0e8",
-
-  storageBucket:
-    "voiceflow-ai-1c0e8.firebasestorage.app",
-
-  messagingSenderId:
-    "911732232577",
-
-  appId:
-    "1:911732232577:web:2c538a95eb270619839880"
+  apiKey: "AIzaSyA_h-rYvoL2dZs-9Q9cNdTQFfjAQpnfdII",
+  authDomain: "voiceflow-ai-1c0e8.firebaseapp.com",
+  projectId: "voiceflow-ai-1c0e8",
+  storageBucket: "voiceflow-ai-1c0e8.firebasestorage.app",
+  messagingSenderId: "911732232577",
+  appId: "1:911732232577:web:2c538a95eb270619839880"
 };
 
-const app =
-  initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
 
-const auth =
-  getAuth(app);
+const FREE_LIMIT = 10;
+
+let rewriteCount =
+  Number(localStorage.getItem("rewriteCount") || 0);
+
+let mediaRecorder;
+let audioChunks = [];
+
+updateUsage();
+
+function updateUsage(){
+  document.getElementById("usage").innerText =
+    "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
+}
 
 window.signup = async function(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-  const email =
-    document.getElementById("email").value;
-
-  const password =
-    document.getElementById("password").value;
+  if(!email || !password){
+    alert("Please enter email and password.");
+    return;
+  }
 
   try{
-
-    await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
+    await createUserWithEmailAndPassword(auth, email, password);
     alert("Signup successful!");
-
   }catch(err){
-
     alert(err.message);
   }
 }
 
 window.login = async function(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-  const email =
-    document.getElementById("email").value;
-
-  const password =
-    document.getElementById("password").value;
+  if(!email || !password){
+    alert("Please enter email and password.");
+    return;
+  }
 
   try{
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
+    await signInWithEmailAndPassword(auth, email, password);
     alert("Login successful!");
-
   }catch(err){
-
     alert(err.message);
   }
 }
 
 window.logout = async function(){
-
-  await signOut(auth);
+  try{
+    await signOut(auth);
+  }catch(err){
+    alert(err.message);
+  }
 }
 
-onAuthStateChanged(auth,(user)=>{
-
+onAuthStateChanged(auth, (user)=>{
   if(user){
-
-    document.getElementById(
-      "userStatus"
-    ).innerText =
+    document.getElementById("userStatus").innerText =
       "Logged in: " + user.email;
-
   }else{
-
-    document.getElementById(
-      "userStatus"
-    ).innerText =
+    document.getElementById("userStatus").innerText =
       "Not logged in";
   }
 });
 
-const FREE_LIMIT = 10;
-
-let rewriteCount =
-  Number(
-    localStorage.getItem("rewriteCount") || 0
-  );
-
-updateUsage();
-
-function updateUsage(){
-
-  document.getElementById("usage").innerText =
-    "Free Plan: " +
-    rewriteCount +
-    " / " +
-    FREE_LIMIT +
-    " rewrites used today";
-}
-
 window.cleanText = function(){
-
   const cleaned =
     document.getElementById("output").value
       .replace(/\s+/g," ")
       .trim();
 
-  document.getElementById("output").value =
-    cleaned;
-
-  document.getElementById("status").innerHTML =
-    "✨ Text cleaned";
+  document.getElementById("output").value = cleaned;
+  document.getElementById("status").innerHTML = "✨ Text cleaned";
 }
 
-window.professionalRewrite =
-async function(){
-
+window.professionalRewrite = async function(){
   const text =
     document.getElementById("output").value.trim();
 
-  // BLOCK EMPTY TEXT
   if(!text){
-
     document.getElementById("status").innerHTML =
       "❌ Please speak or type something first.";
-
     return;
   }
 
   if(rewriteCount >= FREE_LIMIT){
-
     openUpgrade();
     return;
   }
@@ -589,33 +369,25 @@ async function(){
     "⏳ AI rewriting...";
 
   try{
+    const response = await fetch(
+      "https://voiceflow-mvp.onrender.com/rewrite",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          text,
+          tone
+        })
+      }
+    );
 
-    const response =
-      await fetch(
-        "https://voiceflow-mvp.onrender.com/rewrite",
-        {
-          method:"POST",
+    const data = await response.json();
 
-          headers:{
-            "Content-Type":"application/json"
-          },
-
-          body:JSON.stringify({
-            text,
-            tone
-          })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    // SAFETY FIX
     if(!data.result){
-
       document.getElementById("status").innerHTML =
         "❌ Rewrite failed.";
-
       return;
     }
 
@@ -624,10 +396,7 @@ async function(){
 
     rewriteCount++;
 
-    localStorage.setItem(
-      "rewriteCount",
-      rewriteCount
-    );
+    localStorage.setItem("rewriteCount", rewriteCount);
 
     updateUsage();
 
@@ -637,32 +406,21 @@ async function(){
     addToHistory(data.result);
 
   }catch(err){
-
     console.error(err);
-
     document.getElementById("status").innerHTML =
       "❌ Rewrite failed.";
   }
 }
 
 function addToHistory(text){
+  const div = document.createElement("div");
+  div.className = "history-item";
+  div.innerText = text;
 
-  const div =
-    document.createElement("div");
-
-  div.className =
-    "history-item";
-
-  div.innerText =
-    text;
-
-  document.getElementById(
-    "historyList"
-  ).prepend(div);
+  document.getElementById("historyList").prepend(div);
 }
 
 window.copyText = function(){
-
   navigator.clipboard.writeText(
     document.getElementById("output").value
   );
@@ -672,28 +430,17 @@ window.copyText = function(){
 }
 
 window.openUpgrade = function(){
-
-  document.getElementById(
-    "upgradeModal"
-  ).style.display = "flex";
+  document.getElementById("upgradeModal").style.display = "flex";
 }
 
 window.closeUpgrade = function(){
-
-  document.getElementById(
-    "upgradeModal"
-  ).style.display = "none";
+  document.getElementById("upgradeModal").style.display = "none";
 }
 
-let mediaRecorder;
-let audioChunks = [];
-
 window.startRecording = async function(){
-
   document.getElementById("output").value = "";
 
   try{
-
     const stream =
       await navigator.mediaDevices.getUserMedia({
         audio:true
@@ -701,111 +448,83 @@ window.startRecording = async function(){
 
     audioChunks = [];
 
-    mediaRecorder =
-      new MediaRecorder(stream);
+    mediaRecorder = new MediaRecorder(stream);
 
-    mediaRecorder.ondataavailable =
-      (event)=>{
-        audioChunks.push(event.data);
-      };
+    mediaRecorder.ondataavailable = (event)=>{
+      audioChunks.push(event.data);
+    };
 
-    mediaRecorder.onstop =
-      async ()=>{
-
-      document.getElementById(
-        "status"
-      ).innerHTML =
+    mediaRecorder.onstop = async ()=>{
+      document.getElementById("status").innerHTML =
         "⏳ Sending audio to Whisper...";
 
       const audioBlob =
         new Blob(audioChunks,{
-          type:"audio/wav"
+          type:"audio/webm"
         });
 
-      const formData =
-        new FormData();
+      const formData = new FormData();
 
       formData.append(
         "audio",
         audioBlob,
-        "voice.wav"
+        "voice.webm"
       );
 
       try{
+        const response = await fetch(
+          "https://voiceflow-mvp.onrender.com/transcribe",
+          {
+            method:"POST",
+            body:formData
+          }
+        );
 
-        const response =
-          await fetch(
-            "https://voiceflow-mvp.onrender.com/transcribe",
-            {
-              method:"POST",
-              body:formData
-            }
-          );
+        const data = await response.json();
 
-        const data =
-          await response.json();
+        if(!data.text){
+          document.getElementById("status").innerHTML =
+            "❌ Voice transcription failed.";
+          return;
+        }
 
-        document.getElementById(
-          "output"
-        ).value =
+        document.getElementById("output").value =
           data.text;
 
-        document.getElementById(
-          "status"
-        ).innerHTML =
+        document.getElementById("status").innerHTML =
           "✅ Voice transcribed successfully!";
 
       }catch(err){
-
         console.error(err);
-
-        document.getElementById(
-          "status"
-        ).innerHTML =
+        document.getElementById("status").innerHTML =
           "❌ Whisper transcription failed.";
       }
     };
 
     mediaRecorder.start();
 
-    document.getElementById(
-      "recordBtn"
-    ).disabled = true;
+    document.getElementById("recordBtn").disabled = true;
 
-    document.getElementById(
-      "status"
-    ).innerHTML =
+    document.getElementById("status").innerHTML =
       "🎤 Recording with Whisper...";
 
   }catch(err){
-
     console.error(err);
-
-    alert(
-      "Microphone permission required."
-    );
+    alert("Microphone permission required.");
   }
 }
 
 window.stopRecording = function(){
-
-  if(
-    mediaRecorder &&
-    mediaRecorder.state !== "inactive"
-  ){
-
-    document.getElementById(
-      "status"
-    ).innerHTML =
+  if(mediaRecorder && mediaRecorder.state !== "inactive"){
+    document.getElementById("status").innerHTML =
       "⏳ Processing audio...";
 
     mediaRecorder.stop();
 
-    document.getElementById(
-      "recordBtn"
-    ).disabled = false;
+    document.getElementById("recordBtn").disabled = false;
   }
 }
 </script>
+
 </body>
 </html>
