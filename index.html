@@ -1,309 +1,793 @@
 <!DOCTYPE html>
 <html>
 <head>
+
   <title>VoiceFlow AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <style>
-    body{font-family:Arial,sans-serif;background:#0f172a;color:white;margin:0;padding:20px;}
-    .container{max-width:1200px;margin:auto;background:#1e293b;padding:30px;border-radius:20px;}
-    h1{font-size:58px;margin-bottom:10px;}
-    p{color:#cbd5e1;font-size:20px;}
-    button{border:none;padding:16px 24px;border-radius:14px;cursor:pointer;font-size:17px;font-weight:bold;color:white;}
-    button:disabled{opacity:.6;cursor:not-allowed;}
-    .blue{background:#2563eb}.red{background:#dc2626}.green{background:#16a34a}.purple{background:#7c3aed}.gray{background:#64748b}.gold{background:#f59e0b;color:black}
-    .controls{display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;}
-    input,select{padding:14px;border-radius:12px;border:none;font-size:17px;min-width:250px;}
-    textarea{width:100%;height:320px;margin-top:20px;border-radius:18px;padding:24px;font-size:20px;border:none;box-sizing:border-box;line-height:1.7;}
-    .usage{margin-top:20px;font-size:18px;}
-    #status{margin-top:20px;color:#93c5fd;font-weight:bold;font-size:18px;}
-    .history-section{margin-top:40px;background:#334155;padding:25px;border-radius:18px;}
-    .history-item{background:#1e293b;padding:16px;border-radius:12px;margin-top:14px;font-size:18px;}
-    .pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:35px;}
-    .plan{background:#334155;padding:25px;border-radius:18px;}
-    .footer{margin-top:30px;text-align:center;color:#94a3b8;}
-    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:999;}
-    .modal-box{background:#1e293b;padding:40px;border-radius:20px;max-width:500px;text-align:center;}
-    @media(max-width:768px){h1{font-size:38px}.controls{flex-direction:column}button,input,select{width:100%;box-sizing:border-box}}
+
+    body{
+      font-family:Arial,sans-serif;
+      background:#0f172a;
+      color:white;
+      margin:0;
+      padding:20px;
+    }
+
+    .container{
+      max-width:1400px;
+      margin:auto;
+      background:#1e293b;
+      padding:30px;
+      border-radius:22px;
+    }
+
+    h1{
+      font-size:72px;
+      margin:0;
+    }
+
+    p{
+      font-size:22px;
+      color:#dbeafe;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:16px;
+      margin-top:25px;
+    }
+
+    button{
+      border:none;
+      padding:18px 28px;
+      border-radius:18px;
+      cursor:pointer;
+      font-size:18px;
+      font-weight:bold;
+      color:white;
+      transition:0.2s;
+    }
+
+    button:hover{
+      transform:scale(1.03);
+    }
+
+    .blue{
+      background:#2563eb;
+    }
+
+    .red{
+      background:#dc2626;
+    }
+
+    .green{
+      background:#16a34a;
+    }
+
+    .purple{
+      background:#7c3aed;
+    }
+
+    .gray{
+      background:#64748b;
+    }
+
+    .gold{
+      background:#f59e0b;
+      color:black;
+    }
+
+    select{
+      padding:16px;
+      border-radius:14px;
+      font-size:18px;
+      min-width:320px;
+      border:none;
+    }
+
+    textarea{
+      width:100%;
+      height:320px;
+      margin-top:25px;
+      border-radius:24px;
+      padding:24px;
+      font-size:20px;
+      border:none;
+      resize:vertical;
+      box-sizing:border-box;
+      line-height:1.7;
+    }
+
+    input{
+      padding:18px;
+      border-radius:14px;
+      border:none;
+      width:320px;
+      font-size:18px;
+    }
+
+    #status{
+      margin-top:24px;
+      color:#93c5fd;
+      font-size:22px;
+      font-weight:bold;
+    }
+
+    .usage{
+      margin-top:18px;
+      font-size:22px;
+    }
+
+    .history{
+      margin-top:35px;
+      background:#334155;
+      padding:22px;
+      border-radius:22px;
+    }
+
+    .history h2{
+      margin-top:0;
+      font-size:46px;
+    }
+
+    .history-item{
+      background:#1e293b;
+      padding:18px;
+      border-radius:16px;
+      margin-top:14px;
+      font-size:18px;
+    }
+
+    .pricing{
+      display:flex;
+      flex-wrap:wrap;
+      gap:24px;
+      margin-top:35px;
+    }
+
+    .price-card{
+      flex:1;
+      min-width:240px;
+      background:#334155;
+      padding:24px;
+      border-radius:22px;
+    }
+
+    .price-card h3{
+      font-size:42px;
+      margin-top:0;
+    }
+
+    .price-card p{
+      font-size:18px;
+    }
+
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.75);
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+    }
+
+    .modal-box{
+      background:#1e293b;
+      padding:40px;
+      border-radius:24px;
+      text-align:center;
+      width:420px;
+    }
+
+    .modal-box h2{
+      font-size:42px;
+      margin-top:0;
+    }
+
   </style>
+
 </head>
 
 <body>
+
 <div class="container">
 
   <h1>🎙️ VoiceFlow AI</h1>
-  <p>Speak in any language. Sound professional in English instantly.</p>
+
+  <p>
+    Speak naturally. Sound professional instantly.
+  </p>
 
   <div class="controls">
-    <input id="email" placeholder="Email"/>
-    <input id="password" type="password" placeholder="Password"/>
-    <button class="blue" onclick="signup()">Signup</button>
-    <button class="green" onclick="login()">Login</button>
-    <button class="red" onclick="logout()">Logout</button>
+
+    <input
+      id="email"
+      placeholder="Email"
+    />
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+    />
+
+    <button
+      class="blue"
+      onclick="signup()"
+    >
+      Signup
+    </button>
+
+    <button
+      class="green"
+      onclick="login()"
+    >
+      Login
+    </button>
+
+    <button
+      class="red"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+
   </div>
 
-  <div id="userStatus" style="margin-top:15px;font-size:18px;">Not logged in</div>
-
-  <div class="controls">
-    <button class="blue" id="recordBtn" onclick="startRecording()">🎤 Start Recording</button>
-    <button class="red" onclick="stopRecording()">■ Stop</button>
-    <button class="green" onclick="cleanText()">✨ Clean Text</button>
-    <button id="rewriteBtn" class="purple" onclick="professionalRewrite()">✨ AI Rewrite</button>
-    <button class="gray" onclick="copyText()">📋 Copy Text</button>
-    <button class="gold" onclick="openUpgrade()">🚀 Upgrade to Pro</button>
+  <div
+    id="userStatus"
+    style="margin-top:18px;font-size:20px;"
+  >
+    Not logged in
   </div>
 
   <div class="controls">
+
+    <button
+      class="blue"
+      id="recordBtn"
+      onclick="startRecording()"
+    >
+      🎤 Start Recording
+    </button>
+
+    <button
+      class="red"
+      onclick="stopRecording()"
+    >
+      ⏹ Stop
+    </button>
+
+    <button
+      class="green"
+      onclick="cleanText()"
+    >
+      ✨ Clean Text
+    </button>
+
+    <button
+      class="purple"
+      onclick="professionalRewrite()"
+    >
+      ✨ AI Rewrite
+    </button>
+
+    <button
+      class="gray"
+      onclick="copyText()"
+    >
+      📋 Copy Text
+    </button>
+
+    <button
+      class="gold"
+      onclick="openUpgrade()"
+    >
+      🚀 Upgrade to Pro
+    </button>
+
+  </div>
+
+  <div class="controls">
+
     <select id="language">
-      <option value="auto">Auto Detect Any Language</option>
-      <option value="en">English</option>
-      <option value="te">Telugu</option>
-      <option value="hi">Hindi</option>
-      <option value="es">Spanish</option>
-      <option value="ja">Japanese</option>
-      <option value="ml">Malayalam</option>
-      <option value="ta">Tamil</option>
-      <option value="ar">Arabic</option>
+      <option value="auto">🌍 Auto Detect</option>
     </select>
 
     <select id="tone">
-      <option value="Professional">Professional</option>
-      <option value="Casual">Casual</option>
-      <option value="Executive">Executive</option>
-      <option value="Polite">Polite</option>
-      <option value="Concise">Concise</option>
-      <option value="Gen Z">Gen Z</option>
-      <option value="Email">Email</option>
+
+      <option value="Professional">
+        Professional
+      </option>
+
+      <option value="Casual">
+        Casual
+      </option>
+
+      <option value="Executive">
+        Executive
+      </option>
+
+      <option value="Polite">
+        Polite
+      </option>
+
+      <option value="Concise">
+        Concise
+      </option>
+
+      <option value="Gen Z">
+        Gen Z
+      </option>
+
+      <option value="Email">
+        Email
+      </option>
+
     </select>
+
   </div>
 
-  <div class="usage" id="usage"></div>
-  <div id="status">Ready</div>
+  <div
+    class="usage"
+    id="usage"
+  ></div>
 
-  <textarea id="output" placeholder="Type here or record your voice..."></textarea>
+  <div id="status">
+    Ready
+  </div>
 
-  <div class="history-section">
+  <textarea id="output"></textarea>
+
+  <div class="history">
+
     <h2>Recent Rewrites</h2>
+
     <div id="historyList"></div>
 
-    <div class="pricing">
-      <div class="plan"><h3>Free</h3><p>10 rewrites/day</p><p>Basic tones</p></div>
-      <div class="plan"><h3>Pro</h3><p>$9/month</p><p>Unlimited rewrites, all tones, history</p></div>
-      <div class="plan"><h3>Team</h3><p>$29/month</p><p>Team workspace, shared history, admin controls</p></div>
+  </div>
+
+  <div class="pricing">
+
+    <div class="price-card">
+      <h3>Free</h3>
+      <p>10 rewrites/day</p>
+      <p>Basic tones</p>
     </div>
 
-    <div class="footer">Built with AI • Whisper • OpenAI</div>
+    <div class="price-card">
+      <h3>Pro</h3>
+      <p>$9/month</p>
+      <p>
+        Unlimited rewrites,
+        all tones,
+        history
+      </p>
+    </div>
+
+    <div class="price-card">
+      <h3>Team</h3>
+      <p>$29/month</p>
+      <p>
+        Team workspace,
+        shared history,
+        admin controls
+      </p>
+    </div>
+
   </div>
+
 </div>
 
-<div class="modal" id="upgradeModal">
+<div
+  class="modal"
+  id="upgradeModal"
+>
+
   <div class="modal-box">
+
     <h2>Upgrade to Pro 🚀</h2>
-    <p>You reached the free limit.</p>
-    <button class="gold">Upgrade Now</button>
-    <button class="gray" onclick="closeUpgrade()">Close</button>
+
+    <p>
+      You reached the free plan limit.
+    </p>
+
+    <button class="gold">
+      Upgrade Now
+    </button>
+
+    <button
+      class="gray"
+      onclick="closeUpgrade()"
+      style="margin-top:14px;"
+    >
+      Close
+    </button>
+
   </div>
+
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA_h-rYvoL2dZs-9Q9cNdTQFfjAQpnfdII",
-  authDomain: "voiceflow-ai-1c0e8.firebaseapp.com",
-  projectId: "voiceflow-ai-1c0e8",
-  storageBucket: "voiceflow-ai-1c0e8.firebasestorage.app",
-  messagingSenderId: "911732232577",
-  appId: "1:911732232577:web:2c538a95eb270619839880"
+
+  apiKey:
+    "AIzaSyA_h-rYvoL2dZs-9Q9cNdTQFfjAQpnfdII",
+
+  authDomain:
+    "voiceflow-ai-1c0e8.firebaseapp.com",
+
+  projectId:
+    "voiceflow-ai-1c0e8",
+
+  storageBucket:
+    "voiceflow-ai-1c0e8.firebasestorage.app",
+
+  messagingSenderId:
+    "911732232577",
+
+  appId:
+    "1:911732232577:web:2c538a95eb270619839880"
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
 
 window.signup = async function(){
+
+  const email =
+    document.getElementById("email").value;
+
+  const password =
+    document.getElementById("password").value;
+
   try{
+
     await createUserWithEmailAndPassword(
       auth,
-      document.getElementById("email").value,
-      document.getElementById("password").value
+      email,
+      password
     );
+
     alert("Signup successful!");
-  }catch(err){ alert(err.message); }
+
+  }catch(err){
+
+    alert(err.message);
+  }
 }
 
 window.login = async function(){
+
+  const email =
+    document.getElementById("email").value;
+
+  const password =
+    document.getElementById("password").value;
+
   try{
+
     await signInWithEmailAndPassword(
       auth,
-      document.getElementById("email").value,
-      document.getElementById("password").value
+      email,
+      password
     );
+
     alert("Login successful!");
-  }catch(err){ alert(err.message); }
+
+  }catch(err){
+
+    alert(err.message);
+  }
 }
 
 window.logout = async function(){
+
   await signOut(auth);
 }
 
 onAuthStateChanged(auth,(user)=>{
-  document.getElementById("userStatus").innerText =
-    user ? "Logged in: " + user.email : "Not logged in";
+
+  if(user){
+
+    document.getElementById(
+      "userStatus"
+    ).innerText =
+      "Logged in: " + user.email;
+
+  }else{
+
+    document.getElementById(
+      "userStatus"
+    ).innerText =
+      "Not logged in";
+  }
 });
 
 const FREE_LIMIT = 10;
-let rewriteCount = Number(localStorage.getItem("rewriteCount") || 0);
+
+let rewriteCount =
+  Number(
+    localStorage.getItem("rewriteCount") || 0
+  );
+
 updateUsage();
-renderHistory();
 
 function updateUsage(){
+
   document.getElementById("usage").innerText =
-    "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
+    "Free Plan: " +
+    rewriteCount +
+    " / " +
+    FREE_LIMIT +
+    " rewrites used today";
 }
 
 window.cleanText = function(){
-  const cleaned = document.getElementById("output").value.replace(/\s+/g," ").trim();
-  document.getElementById("output").value = cleaned;
-  document.getElementById("status").innerHTML = "✨ Text cleaned";
+
+  const cleaned =
+    document.getElementById("output").value
+      .replace(/\s+/g," ")
+      .trim();
+
+  document.getElementById("output").value =
+    cleaned;
+
+  document.getElementById("status").innerHTML =
+    "✨ Text cleaned";
 }
 
-window.professionalRewrite = async function(){
+window.professionalRewrite =
+async function(){
+
   if(rewriteCount >= FREE_LIMIT){
+
     openUpgrade();
     return;
   }
 
-  const text = document.getElementById("output").value.trim();
-  const tone = document.getElementById("tone").value;
+  const text =
+    document.getElementById("output").value;
 
-  if(!text){
-    alert("Please type or speak something first.");
-    return;
-  }
+  const tone =
+    document.getElementById("tone").value;
 
-  const btn = document.getElementById("rewriteBtn");
-  btn.disabled = true;
-  btn.innerHTML = "⏳ Rewriting...";
-  document.getElementById("status").innerHTML = "⏳ AI rewriting...";
+  document.getElementById("status").innerHTML =
+    "⏳ AI rewriting...";
 
   try{
-    const response = await fetch("https://voiceflow-mvp.onrender.com/rewrite",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ text, tone })
-    });
 
-    const data = await response.json();
-    document.getElementById("output").value = data.result;
+    const response =
+      await fetch(
+        "https://voiceflow-mvp.onrender.com/rewrite",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":"application/json"
+          },
+
+          body:JSON.stringify({
+            text,
+            tone
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    document.getElementById("output").value =
+      data.result;
 
     rewriteCount++;
-    localStorage.setItem("rewriteCount", rewriteCount);
+
+    localStorage.setItem(
+      "rewriteCount",
+      rewriteCount
+    );
+
     updateUsage();
-    saveHistory(data.result);
 
-    document.getElementById("status").innerHTML = "✅ AI rewrite complete!";
+    document.getElementById("status").innerHTML =
+      "✅ AI rewrite complete!";
+
+    addToHistory(data.result);
+
   }catch(err){
-    document.getElementById("status").innerHTML = "❌ AI rewrite failed.";
+
+    console.error(err);
+
+    document.getElementById("status").innerHTML =
+      "❌ Rewrite failed.";
   }
-
-  btn.disabled = false;
-  btn.innerHTML = "✨ AI Rewrite";
 }
 
-function saveHistory(text){
-  let history = JSON.parse(localStorage.getItem("rewriteHistory") || "[]");
-  history.unshift(text);
-  history = history.slice(0,5);
-  localStorage.setItem("rewriteHistory",JSON.stringify(history));
-  renderHistory();
-}
+function addToHistory(text){
 
-function renderHistory(){
-  const history = JSON.parse(localStorage.getItem("rewriteHistory") || "[]");
-  const container = document.getElementById("historyList");
-  container.innerHTML = "";
+  const div =
+    document.createElement("div");
 
-  history.forEach(item=>{
-    const div = document.createElement("div");
-    div.className = "history-item";
-    div.innerText = item;
-    container.appendChild(div);
-  });
+  div.className =
+    "history-item";
+
+  div.innerText =
+    text;
+
+  document.getElementById(
+    "historyList"
+  ).prepend(div);
 }
 
 window.copyText = function(){
-  navigator.clipboard.writeText(document.getElementById("output").value);
-  document.getElementById("status").innerHTML = "📋 Copied to clipboard!";
+
+  navigator.clipboard.writeText(
+    document.getElementById("output").value
+  );
+
+  document.getElementById("status").innerHTML =
+    "📋 Copied!";
 }
 
 window.openUpgrade = function(){
-  document.getElementById("upgradeModal").style.display = "flex";
+
+  document.getElementById(
+    "upgradeModal"
+  ).style.display = "flex";
 }
 
 window.closeUpgrade = function(){
-  document.getElementById("upgradeModal").style.display = "none";
+
+  document.getElementById(
+    "upgradeModal"
+  ).style.display = "none";
 }
 
 let mediaRecorder;
 let audioChunks = [];
 
 window.startRecording = async function(){
+
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+
+    const stream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:true
+      });
 
     audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
 
-    mediaRecorder.ondataavailable = event=>{
-      audioChunks.push(event.data);
-    };
+    mediaRecorder =
+      new MediaRecorder(stream);
 
-    mediaRecorder.onstop = async ()=>{
-      document.getElementById("status").innerHTML = "⏳ Transcribing voice...";
+    mediaRecorder.ondataavailable =
+      (event)=>{
+        audioChunks.push(event.data);
+      };
 
-      const audioBlob = new Blob(audioChunks,{ type:"audio/webm" });
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "voice.webm");
+    mediaRecorder.onstop =
+      async ()=>{
 
-      try{
-        const response = await fetch("https://voiceflow-mvp.onrender.com/transcribe",{
-          method:"POST",
-          body:formData
+      document.getElementById(
+        "status"
+      ).innerHTML =
+        "⏳ Sending audio to Whisper...";
+
+      const audioBlob =
+        new Blob(audioChunks,{
+          type:"audio/webm"
         });
 
-        const data = await response.json();
+      const formData =
+        new FormData();
 
-        document.getElementById("output").value = data.text;
-        document.getElementById("status").innerHTML = "✅ Voice transcribed!";
+      formData.append(
+        "audio",
+        audioBlob,
+        "voice.webm"
+      );
+
+      try{
+
+        const response =
+          await fetch(
+            "https://voiceflow-mvp.onrender.com/transcribe",
+            {
+              method:"POST",
+              body:formData
+            }
+          );
+
+        const data =
+          await response.json();
+
+        document.getElementById(
+          "output"
+        ).value =
+          data.text;
+
+        document.getElementById(
+          "status"
+        ).innerHTML =
+          "✅ Voice transcribed successfully!";
+
       }catch(err){
-        document.getElementById("status").innerHTML = "❌ Transcription failed.";
+
+        console.error(err);
+
+        document.getElementById(
+          "status"
+        ).innerHTML =
+          "❌ Whisper transcription failed.";
       }
     };
 
     mediaRecorder.start();
-    document.getElementById("recordBtn").disabled = true;
-    document.getElementById("status").innerHTML = "🎤 Recording with Whisper...";
+
+    document.getElementById(
+      "recordBtn"
+    ).disabled = true;
+
+    document.getElementById(
+      "status"
+    ).innerHTML =
+      "🎤 Recording with Whisper...";
+
   }catch(err){
-    alert("Microphone permission needed.");
+
+    console.error(err);
+
+    alert(
+      "Microphone permission required."
+    );
   }
 }
 
 window.stopRecording = function(){
-  if(mediaRecorder && mediaRecorder.state !== "inactive"){
-    mediaRecorder.stop();
-    document.getElementById("recordBtn").disabled = false;
-  }
 
-  document.getElementById("status").innerHTML = "■ Recording stopped";
+  if(
+    mediaRecorder &&
+    mediaRecorder.state !== "inactive"
+  ){
+
+    mediaRecorder.stop();
+
+    document.getElementById(
+      "recordBtn"
+    ).disabled = false;
+
+    document.getElementById(
+      "status"
+    ).innerHTML =
+      "🛑 Recording stopped";
+  }
 }
 
 </script>
+
 </body>
 </html>
