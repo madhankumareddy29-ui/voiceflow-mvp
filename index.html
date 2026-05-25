@@ -672,6 +672,8 @@ let audioChunks = [];
 
 window.startRecording = async function(){
 
+  document.getElementById("output").value = "";
+
   try{
 
     const stream =
