@@ -30,30 +30,23 @@ app.get("/", (req, res) => {
 // =========================
 
 app.post("/transcribe", upload.single("audio"), async (req, res) => {
-
   try {
-
     if (!req.file) {
-
       return res.status(400).json({
         error: "No audio file received",
       });
     }
 
-    // FIX FILE EXTENSION FOR WHISPER
     const fixedPath = req.file.path + ".webm";
 
     fs.renameSync(req.file.path, fixedPath);
 
     const transcription =
       await openai.audio.transcriptions.create({
-
         file: fs.createReadStream(fixedPath),
-
         model: "whisper-1",
       });
 
-    // DELETE TEMP FILE
     fs.unlinkSync(fixedPath);
 
     res.json({
@@ -61,7 +54,6 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
     });
 
   } catch (err) {
-
     console.error("TRANSCRIBE ERROR:", err);
 
     res.status(500).json({
@@ -77,50 +69,39 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
 // =========================
 
 app.post("/rewrite", async (req, res) => {
-
   try {
-
     const { text, tone } = req.body;
+
+    if (!text || !text.trim()) {
+      return res.status(400).json({
+        error: "No text provided",
+      });
+    }
 
     let toneInstruction = "";
 
     if (tone === "Professional") {
-
       toneInstruction =
         "Sound professional, polished, workplace-friendly, and clear.";
-
     } else if (tone === "Casual") {
-
       toneInstruction =
         "Sound casual, friendly, natural, and relaxed.";
-
     } else if (tone === "Executive") {
-
       toneInstruction =
         "Sound concise, direct, confident, and executive-level.";
-
     } else if (tone === "Polite") {
-
       toneInstruction =
         "Make it extra polite, respectful, and warm.";
-
     } else if (tone === "Concise") {
-
       toneInstruction =
         "Keep it short, clean, and direct.";
-
     } else if (tone === "Gen Z") {
-
       toneInstruction =
         "Use modern Gen Z texting style naturally.";
-
     } else if (tone === "Email") {
-
       toneInstruction =
         "Rewrite it like a professional email with proper formatting.";
-
     } else {
-
       toneInstruction =
         "Use natural human English.";
     }
@@ -143,6 +124,10 @@ Your job:
 - understand the REAL intent
 - convert the meaning into clean natural English
 - generate ONLY the final polished English message
+- if the user says "Frank ki msg pampali", "Frank ki msg cheyali", "tell Frank", "send to Frank", "message Frank", or similar, write the actual message addressed to Frank
+- do NOT ask Frank to send a message
+- do NOT include phrases like "can you send a message for me"
+- if the user says "manager ki", "team ki", "client ki", or similar, write the actual message addressed to that person/group
 
 ${toneInstruction}
 
@@ -155,6 +140,28 @@ Rules:
 - Keep concise
 - Avoid robotic wording
 - If Email tone is selected, use proper email formatting
+- If Casual tone is selected, make it sound like a natural Teams/Slack message
+- If Professional tone is selected, make it suitable for workplace communication
+
+Examples:
+
+Input:
+arey frank ki msg pampali itla frank sorry for short notice nak health baledu feeling sick konni days naku work from home kavali does it work with you ani
+
+Output:
+Hey Frank, sorry for the short notice. I’m not feeling well and need to work from home for a few days. Would that work for you?
+
+Input:
+frank ki teams lo msg cheyali that nenu change review state lo petina thanks for heads up ani
+
+Output:
+Hey Frank, I moved the change to review state. Thanks for the heads up!
+
+Input:
+manager ki cheppu nenu traffic valla late avutanu
+
+Output:
+Hi, I’m running late because of traffic.
 
 User Input:
 ${text}
@@ -162,7 +169,6 @@ ${text}
 
     const completion =
       await openai.chat.completions.create({
-
         model: "gpt-3.5-turbo",
 
         messages: [
@@ -172,7 +178,7 @@ ${text}
           },
         ],
 
-        temperature: 0.7,
+        temperature: 0.4,
       });
 
     res.json({
@@ -181,7 +187,6 @@ ${text}
     });
 
   } catch (err) {
-
     console.error("REWRITE ERROR:", err);
 
     res.status(500).json({
