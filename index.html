@@ -567,6 +567,7 @@ async function(){
   const text =
     document.getElementById("output").value.trim();
 
+  // BLOCK EMPTY TEXT
   if(!text){
 
     document.getElementById("status").innerHTML =
@@ -609,6 +610,15 @@ async function(){
     const data =
       await response.json();
 
+    // SAFETY FIX
+    if(!data.result){
+
+      document.getElementById("status").innerHTML =
+        "❌ Rewrite failed.";
+
+      return;
+    }
+
     document.getElementById("output").value =
       data.result;
 
@@ -634,6 +644,7 @@ async function(){
       "❌ Rewrite failed.";
   }
 }
+
 function addToHistory(text){
 
   const div =
