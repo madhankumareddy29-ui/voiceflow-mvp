@@ -97,7 +97,7 @@ app.post("/rewrite", async (req, res) => {
         "Keep it short, clean, and direct.";
     } else if (tone === "Gen Z") {
       toneInstruction =
-        "Use modern Gen Z texting style naturally.";
+        "Use modern Gen Z texting style naturally without sounding cringe.";
     } else if (tone === "Email") {
       toneInstruction =
         "Rewrite it like a professional email with proper formatting.";
@@ -118,16 +118,30 @@ The user may type:
 - Spanish + English
 - slang
 - rough thoughts
+- emotional thoughts
+- workplace instructions
 - instructions instead of final sentences
 
 Your job:
-- understand the REAL intent
-- convert the meaning into clean natural English
-- generate ONLY the final polished English message
-- if the user says "Frank ki msg pampali", "Frank ki msg cheyali", "tell Frank", "send to Frank", "message Frank", or similar, write the actual message addressed to Frank
-- do NOT ask Frank to send a message
-- do NOT include phrases like "can you send a message for me"
-- if the user says "manager ki", "team ki", "client ki", or similar, write the actual message addressed to that person/group
+- understand the REAL intent emotionally and contextually
+- convert mixed language thoughts into clean natural English
+- preserve emotions and personality
+- keep Telugu slang feeling natural
+- generate ONLY the final polished message
+
+Important:
+- if user says "Frank ki msg pampali", "Frank ki msg cheyali", "message Frank", "tell Frank", "send to Frank", or similar, directly write the message TO Frank
+- never say "can you send a message for me"
+- if user says "manager ki", "team ki", "client ki", or similar, write the actual message addressed to that person/group
+- preserve emotional tone
+- do not over-formalize emotional messages
+- do not invent meanings
+- do not mistranslate Telugu slang
+- "nana" can mean "dear", "bro", or emotional emphasis depending on context
+- avoid weird translations like "dad" unless clearly talking about father
+- keep Gen Z tone modern and natural
+- keep Casual tone like real texting
+- keep Professional tone workplace-friendly
 
 ${toneInstruction}
 
@@ -140,7 +154,7 @@ Rules:
 - Keep concise
 - Avoid robotic wording
 - If Email tone is selected, use proper email formatting
-- If Casual tone is selected, make it sound like a natural Teams/Slack message
+- If Casual tone is selected, make it sound like a natural Teams/Slack/message
 - If Professional tone is selected, make it suitable for workplace communication
 
 Examples:
@@ -162,6 +176,12 @@ manager ki cheppu nenu traffic valla late avutanu
 
 Output:
 Hi, I’m running late because of traffic.
+
+Input:
+tulasi ki itla chepali nenu nana chala istam ra nv ante naku pelli cheskundam next year ending lopu okay na
+
+Output:
+Hey Tulasi, I really like you a lot. You mean a lot to me. Can we get married by the end of next year?
 
 User Input:
 ${text}
