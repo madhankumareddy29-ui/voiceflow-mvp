@@ -564,14 +564,22 @@ window.cleanText = function(){
 window.professionalRewrite =
 async function(){
 
+  const text =
+    document.getElementById("output").value.trim();
+
+  if(!text){
+
+    document.getElementById("status").innerHTML =
+      "❌ Please speak or type something first.";
+
+    return;
+  }
+
   if(rewriteCount >= FREE_LIMIT){
 
     openUpgrade();
     return;
   }
-
-  const text =
-    document.getElementById("output").value;
 
   const tone =
     document.getElementById("tone").value;
@@ -626,7 +634,6 @@ async function(){
       "❌ Rewrite failed.";
   }
 }
-
 function addToHistory(text){
 
   const div =
