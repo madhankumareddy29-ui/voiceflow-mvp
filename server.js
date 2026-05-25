@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/rewrite", async (req, res) => {
+
   try {
 
     const { text, tone } = req.body;
@@ -28,17 +29,17 @@ app.post("/rewrite", async (req, res) => {
     if (tone === "Professional") {
 
       toneInstruction =
-        "Sound professional, clear, workplace-friendly, and polished.";
+        "Sound professional, polished, workplace-friendly, and clear.";
 
     } else if (tone === "Casual") {
 
       toneInstruction =
-        "Sound casual, friendly, relaxed, and natural like texting a coworker.";
+        "Sound casual, friendly, natural, and relaxed.";
 
     } else if (tone === "Executive") {
 
       toneInstruction =
-        "Sound concise, confident, executive-level, and direct.";
+        "Sound concise, direct, confident, and executive-level.";
 
     } else if (tone === "Polite") {
 
@@ -48,49 +49,79 @@ app.post("/rewrite", async (req, res) => {
     } else if (tone === "Concise") {
 
       toneInstruction =
-        "Keep it very short, clear, and direct.";
+        "Keep it short, clean, and direct.";
 
     } else if (tone === "Gen Z") {
 
       toneInstruction =
-        "Use modern Gen Z texting style naturally, but keep it understandable.";
+        "Use modern Gen Z texting style naturally.";
 
     } else if (tone === "Email") {
 
       toneInstruction =
-        "Rewrite it like a clean professional email. Include greeting and closing only if useful.";
+        "Rewrite it like a professional email with proper formatting.";
 
     } else {
 
       toneInstruction =
-        "Use clean, natural, human English.";
+        "Use natural human English.";
     }
 
     const prompt = `
-You are an AI communication assistant.
+You are an AI message rewriting assistant.
 
-The user may give:
+The user may type:
 - broken English
 - Telugu + English mixed text
-- instructions like "send this to Frank"
-- rough thoughts instead of final sentences
+- rough thoughts
+- instructions instead of final sentences
 
 Your job:
 - understand the REAL intent
-- generate the FINAL polished message only
+- generate ONLY the final polished message
+
+VERY IMPORTANT:
+
+If user says things like:
+- "Frank ki msg cheyali"
+- "Teams lo pampali"
+- "tell Frank"
+- "send update to Frank"
+
+You MUST generate the ACTUAL message TO Frank.
+
+DO NOT say:
+- "I sent a message"
+- "I will tell Frank"
+- "Can you rewrite this"
+
+Convert thoughts directly into the final message.
 
 ${toneInstruction}
 
 Rules:
-- Never explain what you are doing
-- Never say "Here is your rewritten message"
-- Never repeat the user's instructions
-- Output ONLY the final rewritten message
-- Make it sound natural and human
-- Keep meaning same
-- Workplace-friendly when needed
+- Output ONLY the rewritten message
+- Never explain anything
+- Never repeat user instructions
+- Keep original meaning
+- Keep it natural and human
 - Avoid robotic wording
-- Do not overcomplicate
+- Keep it realistic
+- Keep it concise
+
+Examples:
+
+Input:
+Frank ki teams lo msg cheyali that nenu change review state lo petina thanks for heads up ani
+
+Output:
+Hey Frank, I moved the change to review state. Thanks for the heads up!
+
+Input:
+Frank ki casual ga cheppu nenu change review state lo petina thanks
+
+Output:
+Hey Frank, updated the change to review state. Thanks for the heads up!
 
 User Input:
 ${text}
@@ -108,7 +139,7 @@ ${text}
           },
         ],
 
-        temperature: 0.8,
+        temperature: 0.7,
       });
 
     res.json({
