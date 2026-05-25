@@ -774,19 +774,18 @@ window.stopRecording = function(){
     mediaRecorder.state !== "inactive"
   ){
 
+    document.getElementById(
+      "status"
+    ).innerHTML =
+      "⏳ Processing audio...";
+
     mediaRecorder.stop();
 
     document.getElementById(
       "recordBtn"
     ).disabled = false;
-
-    document.getElementById(
-      "status"
-    ).innerHTML =
-      "🛑 Recording stopped";
   }
 }
-
 </script>
 
 </body>
