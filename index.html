@@ -211,43 +211,62 @@ window.professionalRewrite = async function(){
   }
 
   const tone = document.getElementById("tone").value;
-  document.getElementById("status").innerHTML = "⏳ AI rewriting...";
+
+  document.getElementById("status").innerHTML =
+    "⏳ AI rewriting...";
 
   try{
-    const response = await fetch("https://voiceflow-mvp.onrender.com/rewrite",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({text,tone})
-    });
+    const response = await fetch(
+      "https://voiceflow-mvp.onrender.com/rewrite",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          text,
+          tone
+        })
+      }
+    );
 
     const data = await response.json();
 
     if(!data.result){
-      document.getElementById("status").innerHTML = "❌ Rewrite failed.";
+      document.getElementById("status").innerHTML =
+        "❌ Rewrite failed.";
       return;
     }
 
     document.getElementById("output").value = data.result;
 
     rewriteCount++;
-    updateUsage();
 
     const user = auth.currentUser;
 
     if(user){
-      await setDoc(doc(db,"users",user.uid),{
-        email:user.email,
-        plan:"free",
-        rewritesToday:rewriteCount
-      });
+      await setDoc(
+        doc(db,"users",user.uid),
+        {
+          email:user.email,
+          plan:"free",
+          rewritesToday:rewriteCount
+        }
+      );
     }
 
-    document.getElementById("status").innerHTML = "✅ AI rewrite complete!";
+    updateUsage();
+
+    document.getElementById("status").innerHTML =
+      "✅ AI rewrite complete!";
+
     addToHistory(data.result);
 
   }catch(err){
     console.error(err);
-    document.getElementById("status").innerHTML = "❌ Rewrite failed.";
+
+    document.getElementById("status").innerHTML =
+      "❌ Rewrite failed.";
   }
 }
 
