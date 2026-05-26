@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const OpenAI = require("openai");
 const multer = require("multer");
 const fs = require("fs");
+const Stripe = require("stripe");
 
 dotenv.config();
 
@@ -20,40 +21,57 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+app.post("/create-checkout-session", async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "subscription",
+      line_items: [
+        {
+          price: process.env.STRIPE_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+      success_url: "https://voiceflow-mvp.onrender.com?success=true",
+      cancel_url: "https://voiceflow-mvp.onrender.com?canceled=true",
+    });
 
-// =========================
-// WHISPER TRANSCRIBE
-// =========================
+    res.json({
+      url: session.url,
+    });
+  } catch (err) {
+    console.error("STRIPE ERROR:", err);
+
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+});
 
 app.post("/transcribe", upload.single("audio"), async (req, res) => {
-
   try {
-
     if (!req.file) {
-
       return res.status(400).json({
         error: "No audio file received",
       });
     }
 
-    // FIX FILE EXTENSION FOR WHISPER
     const fixedPath = req.file.path + ".webm";
 
     fs.renameSync(req.file.path, fixedPath);
 
     const transcription =
       await openai.audio.transcriptions.create({
-
         file: fs.createReadStream(fixedPath),
-
         model: "whisper-1",
       });
 
-    // DELETE TEMP FILE
     fs.unlinkSync(fixedPath);
 
     res.json({
@@ -61,7 +79,6 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
     });
 
   } catch (err) {
-
     console.error("TRANSCRIBE ERROR:", err);
 
     res.status(500).json({
@@ -71,20 +88,11 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
   }
 });
 
-
-// =========================
-// AI REWRITE
-// =========================
-
 app.post("/rewrite", async (req, res) => {
-
   try {
-
     const { text, tone } = req.body;
 
-    // EMPTY INPUT CHECK
     if (!text || text.trim() === "") {
-
       return res.status(400).json({
         error: "Please speak or type something first.",
       });
@@ -93,42 +101,27 @@ app.post("/rewrite", async (req, res) => {
     let toneInstruction = "";
 
     if (tone === "Professional") {
-
       toneInstruction =
         "Sound professional, polished, workplace-friendly, and clear.";
-
     } else if (tone === "Casual") {
-
       toneInstruction =
         "Sound casual, friendly, natural, and relaxed.";
-
     } else if (tone === "Executive") {
-
       toneInstruction =
         "Sound concise, direct, confident, and executive-level.";
-
     } else if (tone === "Polite") {
-
       toneInstruction =
         "Make it extra polite, respectful, and warm.";
-
     } else if (tone === "Concise") {
-
       toneInstruction =
         "Keep it short, clean, and direct.";
-
     } else if (tone === "Gen Z") {
-
       toneInstruction =
         "Use modern Gen Z texting style naturally.";
-
     } else if (tone === "Email") {
-
       toneInstruction =
         "Rewrite it like a professional email with proper formatting.";
-
     } else {
-
       toneInstruction =
         "Use natural human English.";
     }
@@ -180,16 +173,13 @@ ${text}
 
     const completion =
       await openai.chat.completions.create({
-
         model: "gpt-3.5-turbo",
-
         messages: [
           {
             role: "user",
             content: prompt,
           },
         ],
-
         temperature: 0.3,
       });
 
@@ -199,7 +189,6 @@ ${text}
     });
 
   } catch (err) {
-
     console.error("REWRITE ERROR:", err);
 
     res.status(500).json({
