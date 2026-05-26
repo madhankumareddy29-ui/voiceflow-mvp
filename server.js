@@ -198,6 +198,44 @@ ${text}
   }
 });
 
+app.post("/create-checkout-session", async (req, res) => {
+
+  try {
+
+    const session = await stripe.checkout.sessions.create({
+
+      payment_method_types: ["card"],
+
+      mode: "subscription",
+
+      line_items: [
+        {
+          price: process.env.STRIPE_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+
+      success_url:
+        "https://voiceflow-mvp.onrender.com/success.html",
+
+      cancel_url:
+        "https://voiceflow-mvp.onrender.com/cancel.html",
+    });
+
+    res.json({
+      url: session.url,
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: "Stripe checkout failed",
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
