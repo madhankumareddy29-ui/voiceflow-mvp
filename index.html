@@ -32,12 +32,9 @@
     <input id="email" placeholder="Email"/>
     <input id="password" type="password" placeholder="Password"/>
     <button class="blue" onclick="signup()">Signup</button>
-<button class="green" onclick="login()">Login</button>
-<button class="red" onclick="logout()">Logout</button>
-
-<button class="purple" id="upgradeBtn">
-  🚀 Upgrade Pro
-</button>
+    <button class="green" onclick="login()">Login</button>
+    <button class="red" onclick="logout()">Logout</button>
+    <button class="purple" id="upgradeBtn">🚀 Upgrade Pro</button>
   </div>
 
   <div id="userStatus" style="margin-top:18px;font-size:20px;">Not logged in</div>
@@ -105,12 +102,17 @@ const db = getFirestore(firebaseApp);
 
 const FREE_LIMIT = 10;
 let rewriteCount = 0;
+let currentPlan = "free";
 let mediaRecorder;
 let audioChunks = [];
 
 function updateUsage(){
-  document.getElementById("usage").innerText =
-    "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
+  if(currentPlan === "pro"){
+    document.getElementById("usage").innerText = "🚀 Pro Plan: Unlimited rewrites";
+  }else{
+    document.getElementById("usage").innerText =
+      "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
+  }
 }
 
 updateUsage();
@@ -131,10 +133,12 @@ window.signup = async function(){
     await setDoc(doc(db,"users",user.uid),{
       email:user.email,
       plan:"free",
+      pro:false,
       rewritesToday:0
     });
 
     rewriteCount = 0;
+    currentPlan = "free";
     updateUsage();
 
     alert("Signup successful!");
@@ -162,6 +166,12 @@ window.login = async function(){
 
 window.logout = async function(){
   await signOut(auth);
+  rewriteCount = 0;
+  currentPlan = "free";
+  updateUsage();
+  document.getElementById("output").value = "";
+  document.getElementById("status").innerHTML = "Logged out.";
+  document.getElementById("userStatus").innerText = "Not logged in";
 }
 
 onAuthStateChanged(auth, async (user)=>{
@@ -169,17 +179,35 @@ onAuthStateChanged(auth, async (user)=>{
     document.getElementById("userStatus").innerText =
       "Logged in: " + user.email;
 
-    const userRef = doc(db,"users",user.uid);
-    const userSnap = await getDoc(userRef);
+    document.getElementById("email").value = user.email;
 
-    if(userSnap.exists()){
-      rewriteCount = userSnap.data().rewritesToday || 0;
+    const uidRef = doc(db,"users",user.uid);
+    const emailRef = doc(db,"users",user.email);
+
+    const uidSnap = await getDoc(uidRef);
+    const emailSnap = await getDoc(emailRef);
+
+    if(emailSnap.exists() && emailSnap.data().plan === "pro"){
+      currentPlan = "pro";
+      rewriteCount = emailSnap.data().rewritesToday || 0;
+
+      await setDoc(uidRef,{
+        email:user.email,
+        plan:"pro",
+        pro:true
+      },{merge:true});
+
+    }else if(uidSnap.exists()){
+      currentPlan = uidSnap.data().plan || "free";
+      rewriteCount = uidSnap.data().rewritesToday || 0;
     }else{
+      currentPlan = "free";
       rewriteCount = 0;
 
-      await setDoc(userRef,{
+      await setDoc(uidRef,{
         email:user.email,
         plan:"free",
+        pro:false,
         rewritesToday:0
       });
     }
@@ -189,6 +217,7 @@ onAuthStateChanged(auth, async (user)=>{
   }else{
     document.getElementById("userStatus").innerText = "Not logged in";
     rewriteCount = 0;
+    currentPlan = "free";
     updateUsage();
   }
 });
@@ -208,7 +237,7 @@ window.professionalRewrite = async function(){
     return;
   }
 
-  if(rewriteCount >= FREE_LIMIT){
+  if(currentPlan !== "pro" && rewriteCount >= FREE_LIMIT){
     document.getElementById("status").innerHTML =
       "🚀 Free limit reached. Please upgrade to Pro.";
     return;
@@ -221,17 +250,18 @@ window.professionalRewrite = async function(){
 
   try{
     const response = await fetch(
-  "https://voiceflow-mvp.onrender.com/create-checkout-session",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email: document.getElementById("email").value
-    })
-  }
-);
+      "https://voiceflow-mvp.onrender.com/rewrite",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          text,
+          tone
+        })
+      }
+    );
 
     const data = await response.json();
 
@@ -243,7 +273,9 @@ window.professionalRewrite = async function(){
 
     document.getElementById("output").value = data.result;
 
-    rewriteCount++;
+    if(currentPlan !== "pro"){
+      rewriteCount++;
+    }
 
     const user = auth.currentUser;
 
@@ -252,9 +284,11 @@ window.professionalRewrite = async function(){
         doc(db,"users",user.uid),
         {
           email:user.email,
-          plan:"free",
+          plan:currentPlan,
+          pro: currentPlan === "pro",
           rewritesToday:rewriteCount
-        }
+        },
+        {merge:true}
       );
     }
 
@@ -341,16 +375,31 @@ window.stopRecording = function(){
     document.getElementById("recordBtn").disabled = false;
   }
 }
+
 document
   .getElementById("upgradeBtn")
   .addEventListener("click", async ()=>{
+
+    const user = auth.currentUser;
+    const email = user ? user.email : document.getElementById("email").value.trim();
+
+    if(!email){
+      alert("Please login or enter email first.");
+      return;
+    }
 
     try{
 
       const response = await fetch(
         "https://voiceflow-mvp.onrender.com/create-checkout-session",
         {
-          method:"POST"
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            email:email
+          })
         }
       );
 
@@ -369,7 +418,6 @@ document
       alert("Stripe checkout failed");
     }
 });
-
 </script>
 
 </body>
