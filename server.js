@@ -115,23 +115,30 @@ app.post("/webhook", async (req, res) => {
     return res.sendStatus(400);
   }
 
-  if (event.type === "checkout.session.completed") {
+  if (event.type === "invoice_payment.paid") {
 
-    const session = event.data.object;
-
-    const email = session.metadata.userEmail;
+    const invoicePayment = event.data.object;
 
     try {
 
-      await db.collection("users")
-        .doc(email)
-        .set({
-          plan: "pro",
-          pro: true,
-          updatedAt: new Date(),
-        }, { merge: true });
+      const invoice = await stripe.invoices.retrieve(
+        invoicePayment.invoice
+      );
 
-      console.log("User upgraded to PRO:", email);
+      const email = invoice.customer_email;
+
+      if (email) {
+
+        await db.collection("users")
+          .doc(email)
+          .set({
+            plan: "pro",
+            pro: true,
+            updatedAt: new Date(),
+          }, { merge: true });
+
+        console.log("User upgraded to PRO:", email);
+      }
 
     } catch (err) {
 
