@@ -221,18 +221,17 @@ window.professionalRewrite = async function(){
 
   try{
     const response = await fetch(
-      "https://voiceflow-mvp.onrender.com/rewrite",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          text,
-          tone
-        })
-      }
-    );
+  "https://voiceflow-mvp.onrender.com/create-checkout-session",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: document.getElementById("email").value
+    })
+  }
+);
 
     const data = await response.json();
 
