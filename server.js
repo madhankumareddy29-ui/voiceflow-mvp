@@ -13,9 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname));
 
-const upload = multer({
-  dest: "uploads/",
-});
+const upload = multer({ dest: "uploads/" });
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -29,27 +27,37 @@ app.get("/", (req, res) => {
 
 app.post("/create-checkout-session", async (req, res) => {
   try {
+    const { email } = req.body;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "subscription",
+
+      customer_email: email,
+
+      metadata: {
+        userEmail: email,
+      },
+
       line_items: [
         {
           price: process.env.STRIPE_PRICE_ID,
           quantity: 1,
         },
       ],
-      success_url: "https://voiceflow-mvp.onrender.com?success=true",
-      cancel_url: "https://voiceflow-mvp.onrender.com?canceled=true",
+
+      success_url: "https://voiceflow-mvp.onrender.com/success.html",
+      cancel_url: "https://voiceflow-mvp.onrender.com/cancel.html",
     });
 
-    res.json({
-      url: session.url,
-    });
+    res.json({ url: session.url });
+
   } catch (err) {
     console.error("STRIPE ERROR:", err);
 
     res.status(500).json({
-      error: err.message,
+      error: "Stripe checkout failed",
+      details: err.message,
     });
   }
 });
@@ -184,8 +192,7 @@ ${text}
       });
 
     res.json({
-      result:
-        completion.choices[0].message.content.trim(),
+      result: completion.choices[0].message.content.trim(),
     });
 
   } catch (err) {
@@ -194,44 +201,6 @@ ${text}
     res.status(500).json({
       error: "Rewrite failed",
       details: err.message,
-    });
-  }
-});
-
-app.post("/create-checkout-session", async (req, res) => {
-
-  try {
-
-    const session = await stripe.checkout.sessions.create({
-
-      payment_method_types: ["card"],
-
-      mode: "subscription",
-
-      line_items: [
-        {
-          price: process.env.STRIPE_PRICE_ID,
-          quantity: 1,
-        },
-      ],
-
-      success_url:
-        "https://voiceflow-mvp.onrender.com/success.html",
-
-      cancel_url:
-        "https://voiceflow-mvp.onrender.com/cancel.html",
-    });
-
-    res.json({
-      url: session.url,
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: "Stripe checkout failed",
     });
   }
 });
