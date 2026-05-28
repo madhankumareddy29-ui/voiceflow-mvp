@@ -37,49 +37,30 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-
-// =========================
-// STRIPE CHECKOUT
-// =========================
-
 app.post("/create-checkout-session", async (req, res) => {
-
   try {
-
     const { email } = req.body;
 
     const session = await stripe.checkout.sessions.create({
-
       payment_method_types: ["card"],
-
       mode: "subscription",
-
       customer_email: email,
-
       metadata: {
         userEmail: email,
       },
-
       line_items: [
         {
           price: process.env.STRIPE_PRICE_ID,
           quantity: 1,
         },
       ],
-
-      success_url:
-        "https://voiceflow-mvp.onrender.com/success.html",
-
-      cancel_url:
-        "https://voiceflow-mvp.onrender.com/cancel.html",
+      success_url: "https://voiceflow-mvp.onrender.com/success.html",
+      cancel_url: "https://voiceflow-mvp.onrender.com/cancel.html",
     });
 
-    res.json({
-      url: session.url,
-    });
+    res.json({ url: session.url });
 
   } catch (err) {
-
     console.error("STRIPE ERROR:", err);
 
     res.status(500).json({
@@ -89,77 +70,67 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 
-
-// =========================
-// STRIPE WEBHOOK
-// =========================
-
 app.post("/webhook", async (req, res) => {
-
   const sig = req.headers["stripe-signature"];
 
   let event;
 
   try {
-
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-
   } catch (err) {
-
-    console.log("Webhook signature failed.");
-
+    console.log("Webhook signature failed:", err.message);
     return res.sendStatus(400);
   }
 
-  if (event.type === "invoice_payment.paid") {
+  try {
+    let email = null;
 
-    const invoicePayment = event.data.object;
-
-    try {
-
-      const invoice = await stripe.invoices.retrieve(
-        invoicePayment.invoice
-      );
-
-      const email = invoice.customer_email;
-
-      if (email) {
-
-        await db.collection("users")
-          .doc(email)
-          .set({
-            plan: "pro",
-            pro: true,
-            updatedAt: new Date(),
-          }, { merge: true });
-
-        console.log("User upgraded to PRO:", email);
-      }
-
-    } catch (err) {
-
-      console.log(err);
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+      email = session.customer_email || session.metadata?.userEmail;
     }
+
+    if (event.type === "invoice_payment.paid") {
+      const invoicePayment = event.data.object;
+      const invoice = await stripe.invoices.retrieve(invoicePayment.invoice);
+      email = invoice.customer_email;
+    }
+
+    if (email) {
+      const userRecord = await admin.auth().getUserByEmail(email);
+
+      await db.collection("users").doc(userRecord.uid).set({
+        email: email,
+        plan: "pro",
+        pro: true,
+        rewritesToday: 0,
+        updatedAt: new Date(),
+      }, { merge: true });
+
+      await db.collection("users").doc(email).set({
+        email: email,
+        plan: "pro",
+        pro: true,
+        updatedAt: new Date(),
+      }, { merge: true });
+
+      console.log("✅ User upgraded to PRO:", email);
+    }
+
+  } catch (err) {
+    console.log("Webhook processing error:", err);
   }
 
   res.sendStatus(200);
 });
 
-
-// =========================
-// WHISPER TRANSCRIBE
-// =========================
-
 app.post("/transcribe", upload.single("audio"), async (req, res) => {
-
   try {
-
     if (!req.file) {
-
       return res.status(400).json({
         error: "No audio file received",
       });
@@ -171,9 +142,7 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
 
     const transcription =
       await openai.audio.transcriptions.create({
-
         file: fs.createReadStream(fixedPath),
-
         model: "whisper-1",
       });
 
@@ -184,7 +153,6 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
     });
 
   } catch (err) {
-
     console.error("TRANSCRIBE ERROR:", err);
 
     res.status(500).json({
@@ -194,19 +162,11 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
   }
 });
 
-
-// =========================
-// AI REWRITE
-// =========================
-
 app.post("/rewrite", async (req, res) => {
-
   try {
-
     const { text, tone } = req.body;
 
     if (!text || text.trim() === "") {
-
       return res.status(400).json({
         error: "Please speak or type something first.",
       });
@@ -215,42 +175,27 @@ app.post("/rewrite", async (req, res) => {
     let toneInstruction = "";
 
     if (tone === "Professional") {
-
       toneInstruction =
         "Sound professional, polished, workplace-friendly, and clear.";
-
     } else if (tone === "Casual") {
-
       toneInstruction =
         "Sound casual, friendly, natural, and relaxed.";
-
     } else if (tone === "Executive") {
-
       toneInstruction =
         "Sound concise, direct, confident, and executive-level.";
-
     } else if (tone === "Polite") {
-
       toneInstruction =
         "Make it extra polite, respectful, and warm.";
-
     } else if (tone === "Concise") {
-
       toneInstruction =
         "Keep it short, clean, and direct.";
-
     } else if (tone === "Gen Z") {
-
       toneInstruction =
         "Use modern Gen Z texting style naturally.";
-
     } else if (tone === "Email") {
-
       toneInstruction =
         "Rewrite it like a professional email with proper formatting.";
-
     } else {
-
       toneInstruction =
         "Use natural human English.";
     }
@@ -294,26 +239,21 @@ ${text}
 
     const completion =
       await openai.chat.completions.create({
-
         model: "gpt-3.5-turbo",
-
         messages: [
           {
             role: "user",
             content: prompt,
           },
         ],
-
         temperature: 0.3,
       });
 
     res.json({
-      result:
-        completion.choices[0].message.content.trim(),
+      result: completion.choices[0].message.content.trim(),
     });
 
   } catch (err) {
-
     console.error("REWRITE ERROR:", err);
 
     res.status(500).json({
@@ -322,7 +262,6 @@ ${text}
     });
   }
 });
-
 
 const PORT = process.env.PORT || 3000;
 
