@@ -31,9 +31,9 @@
   <div class="controls">
     <input id="email" placeholder="Email"/>
     <input id="password" type="password" placeholder="Password"/>
-    <button class="blue" onclick="signup()">Signup</button>
-    <button class="green" onclick="login()">Login</button>
-    <button class="red" onclick="logout()">Logout</button>
+    <button class="blue" id="signupBtn" onclick="signup()">Signup</button>
+    <button class="green" id="loginBtn" onclick="login()">Login</button>
+    <button class="red" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
     <button class="purple" id="upgradeBtn">🚀 Upgrade Pro</button>
   </div>
 
@@ -106,15 +106,26 @@ let currentPlan = "free";
 let mediaRecorder;
 let audioChunks = [];
 
+function setAuthUI(isLoggedIn){
+  document.getElementById("email").style.display = isLoggedIn ? "none" : "inline-block";
+  document.getElementById("password").style.display = isLoggedIn ? "none" : "inline-block";
+  document.getElementById("signupBtn").style.display = isLoggedIn ? "none" : "inline-block";
+  document.getElementById("loginBtn").style.display = isLoggedIn ? "none" : "inline-block";
+  document.getElementById("logoutBtn").style.display = isLoggedIn ? "inline-block" : "none";
+}
+
 function updateUsage(){
   if(currentPlan === "pro"){
     document.getElementById("usage").innerText = "🚀 Pro Plan: Unlimited rewrites";
+    document.getElementById("upgradeBtn").style.display = "none";
   }else{
     document.getElementById("usage").innerText =
       "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
+    document.getElementById("upgradeBtn").style.display = "inline-block";
   }
 }
 
+setAuthUI(false);
 updateUsage();
 
 window.signup = async function(){
@@ -169,6 +180,11 @@ window.logout = async function(){
   rewriteCount = 0;
   currentPlan = "free";
   updateUsage();
+  setAuthUI(false);
+  document.getElementById("email").style.display = "inline-block";
+  document.getElementById("password").style.display = "inline-block";
+  document.getElementById("email").value = "";
+  document.getElementById("password").value = "";
   document.getElementById("output").value = "";
   document.getElementById("status").innerHTML = "Logged out.";
   document.getElementById("userStatus").innerText = "Not logged in";
@@ -176,10 +192,10 @@ window.logout = async function(){
 
 onAuthStateChanged(auth, async (user)=>{
   if(user){
+    setAuthUI(true);
+
     document.getElementById("userStatus").innerText =
       "Logged in: " + user.email;
-
-    document.getElementById("email").value = user.email;
 
     const uidRef = doc(db,"users",user.uid);
     const emailRef = doc(db,"users",user.email);
@@ -215,6 +231,7 @@ onAuthStateChanged(auth, async (user)=>{
     updateUsage();
 
   }else{
+    setAuthUI(false);
     document.getElementById("userStatus").innerText = "Not logged in";
     rewriteCount = 0;
     currentPlan = "free";
@@ -301,7 +318,6 @@ window.professionalRewrite = async function(){
 
   }catch(err){
     console.error(err);
-
     document.getElementById("status").innerHTML =
       "❌ Rewrite failed.";
   }
@@ -412,9 +428,7 @@ document
       }
 
     }catch(err){
-
       console.error(err);
-
       alert("Stripe checkout failed");
     }
 });
