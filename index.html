@@ -258,6 +258,15 @@ window.cleanText = function(){
 }
 
 window.professionalRewrite = async function(){
+
+  const user = auth.currentUser;
+
+  if(!user){
+    document.getElementById("status").innerHTML =
+      "❌ Please login first to use AI Rewrite.";
+    return;
+  }
+
   const text = document.getElementById("output").value.trim();
 
   if(!text){
@@ -265,7 +274,6 @@ window.professionalRewrite = async function(){
       "❌ Please speak or type something first.";
     return;
   }
-
   if(currentPlan !== "pro" && rewriteCount >= FREE_LIMIT){
     document.getElementById("status").innerHTML =
       "🚀 Free limit reached. Please upgrade to Pro.";
