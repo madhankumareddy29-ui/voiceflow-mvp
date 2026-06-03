@@ -38,16 +38,16 @@
 
   <div id="userStatus" style="margin-top:18px;font-size:20px;">Not logged in</div>
 
-  <div class="controls">
-    <button class="blue" id="recordBtn" onclick="startRecording()">🎤 Start Recording</button>
+  <div class="controls" id="appControls">
+  <button class="blue" id="recordBtn" onclick="startRecording()">🎤 Start Recording</button>
     <button class="red" onclick="stopRecording()">⏹ Stop</button>
     <button class="green" onclick="cleanText()">✨ Clean Text</button>
     <button class="purple" onclick="professionalRewrite()">✨ AI Rewrite</button>
     <button class="gray" onclick="copyText()">📋 Copy Text</button>
   </div>
 
-  <div class="controls">
-    <select id="tone">
+  <div class="controls" id="toneControls">
+  <select id="tone">
       <option value="Professional">Professional</option>
       <option value="Casual">Casual</option>
       <option value="Executive">Executive</option>
@@ -126,6 +126,17 @@ function setAuthUI(isLoggedIn){
   document.getElementById("signupBtn").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("loginBtn").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("logoutBtn").style.display = isLoggedIn ? "inline-block" : "none";
+document.getElementById("appControls").style.display =
+  isLoggedIn ? "flex" : "none";
+
+document.getElementById("toneControls").style.display =
+  isLoggedIn ? "flex" : "none";
+
+document.getElementById("usage").style.display =
+  isLoggedIn ? "block" : "none";
+
+document.getElementById("output").style.display =
+  isLoggedIn ? "block" : "none";
 }
 
 function updateUsage(){
@@ -199,7 +210,8 @@ window.logout = async function(){
   document.getElementById("password").value = "";
   document.getElementById("output").value = "";
   document.getElementById("status").innerHTML = "Logged out.";
-  document.getElementById("userStatus").innerText = "Not logged in";
+  document.getElementById("userStatus").innerText =
+  "Please login to start using VoiceFlow AI.";
 }
 
 onAuthStateChanged(auth, async (user)=>{
