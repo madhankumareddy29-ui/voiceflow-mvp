@@ -62,7 +62,7 @@
   <div id="status">Ready</div>
   <textarea id="output"></textarea>
 
-  <div class="history">
+  <div class="history" id="historySection">
     <h2>Recent Rewrites</h2>
     <div id="historyList"></div>
   </div>
@@ -136,6 +136,8 @@ document.getElementById("usage").style.display =
   isLoggedIn ? "block" : "none";
 
 document.getElementById("output").style.display =
+  isLoggedIn ? "block" : "none";
+document.getElementById("historySection").style.display =
   isLoggedIn ? "block" : "none";
 }
 
@@ -254,9 +256,11 @@ onAuthStateChanged(auth, async (user)=>{
 
     updateUsage();
 
-  }else{
+ }else{
     setAuthUI(false);
-    document.getElementById("userStatus").innerText = "Not logged in";
+    document.getElementById("userStatus").innerText =
+      "Please login to start using VoiceFlow AI.";
+    document.getElementById("status").innerHTML = "Ready";
     rewriteCount = 0;
     currentPlan = "free";
     updateUsage();
