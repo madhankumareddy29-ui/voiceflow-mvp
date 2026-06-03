@@ -203,6 +203,7 @@ window.login = async function(){
 }
 
 window.logout = async function(){
+clearHistory();
   await signOut(auth);
   rewriteCount = 0;
   currentPlan = "free";
@@ -218,7 +219,10 @@ window.logout = async function(){
 
 onAuthStateChanged(auth, async (user)=>{
   if(user){
-    setAuthUI(true);
+
+  clearHistory();
+
+  setAuthUI(true);
 
     document.getElementById("userStatus").innerText =
       "Logged in: " + user.email;
@@ -358,7 +362,9 @@ window.professionalRewrite = async function(){
       "❌ Rewrite failed. Server may be waking up. Try again in 30 seconds.";
   }
 }
-
+function clearHistory(){
+  document.getElementById("historyList").innerHTML = "";
+}
 function addToHistory(text){
   const div = document.createElement("div");
   div.className = "history-item";
