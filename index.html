@@ -105,7 +105,11 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
-const FREE_LIMIT = 10;
+const FREE_LIMIT = 3;
+
+function getTodayDate(){
+  return new Date().toISOString().split("T")[0];
+}
 let rewriteCount = 0;
 let currentPlan = "free";
 let mediaRecorder;
@@ -270,9 +274,28 @@ document.getElementById("status").innerHTML = "Ready";
       },{merge:true});
 
     }else if(uidSnap.exists()){
-      currentPlan = uidSnap.data().plan || "free";
-      rewriteCount = uidSnap.data().rewritesToday || 0;
-    }else{
+
+  const data = uidSnap.data();
+  currentPlan = data.plan || "free";
+
+  const today = getTodayDate();
+
+  if(data.lastRewriteDate !== today){
+
+    rewriteCount = 0;
+
+    await setDoc(uidRef,{
+      rewritesToday:0,
+      lastRewriteDate:today
+    },{merge:true});
+
+  }else{
+
+    rewriteCount = data.rewritesToday || 0;
+
+  }
+
+}else{
       currentPlan = "free";
       rewriteCount = 0;
 
@@ -369,7 +392,8 @@ window.professionalRewrite = async function(){
           email:user.email,
           plan:currentPlan,
           pro: currentPlan === "pro",
-          rewritesToday:rewriteCount
+          rewritesToday:rewriteCount,
+          lastRewriteDate:getTodayDate()
         },
         {merge:true}
       );
