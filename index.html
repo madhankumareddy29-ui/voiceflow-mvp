@@ -134,33 +134,35 @@ function setAuthUI(isLoggedIn){
   document.getElementById("password").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("signupBtn").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("loginBtn").style.display = isLoggedIn ? "none" : "inline-block";
+  document.getElementById("forgotBtn").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("logoutBtn").style.display = isLoggedIn ? "inline-block" : "none";
-document.getElementById("forgotBtn").style.display =
-  isLoggedIn ? "none" : "inline-block";
-document.getElementById("appControls").style.display =
-  isLoggedIn ? "flex" : "none";
 
-document.getElementById("toneControls").style.display =
-  isLoggedIn ? "flex" : "none";
+  document.getElementById("appControls").style.display = isLoggedIn ? "flex" : "none";
+  document.getElementById("toneControls").style.display = isLoggedIn ? "flex" : "none";
+  document.getElementById("usage").style.display = isLoggedIn ? "block" : "none";
+  document.getElementById("output").style.display = isLoggedIn ? "block" : "none";
 
-document.getElementById("usage").style.display =
-  isLoggedIn ? "block" : "none";
-
-document.getElementById("output").style.display =
-  isLoggedIn ? "block" : "none";
-document.getElementById("historySection").style.display =
-  isLoggedIn ? "block" : "none";
+  if(!isLoggedIn){
+    document.getElementById("upgradeBtn").style.display = "none";
+  }
 }
 
 function updateUsage(){
+  const user = auth.currentUser;
+
+  if(!user){
+    document.getElementById("upgradeBtn").style.display = "none";
+    document.getElementById("usage").innerText = "";
+    return;
+  }
+
   if(currentPlan === "pro"){
     document.getElementById("usage").innerText = "🚀 Pro Plan: Unlimited rewrites";
     document.getElementById("upgradeBtn").style.display = "none";
   }else{
     document.getElementById("usage").innerText =
       "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
-    document.getElementById("upgradeBtn").style.display =
-  isLoggedIn ? "inline-block" : "none";
+    document.getElementById("upgradeBtn").style.display = "inline-block";
   }
 }
 
@@ -231,7 +233,6 @@ window.forgotPassword = async function(){
 }
 
 window.logout = async function(){
-clearHistory();
   await signOut(auth);
   rewriteCount = 0;
   currentPlan = "free";
@@ -392,15 +393,6 @@ window.professionalRewrite = async function(){
     document.getElementById("status").innerHTML =
       "❌ Rewrite failed. Server may be waking up. Try again in 30 seconds.";
   }
-}
-function clearHistory(){
-  document.getElementById("historyList").innerHTML = "";
-}
-function addToHistory(text){
-  const div = document.createElement("div");
-  div.className = "history-item";
-  div.innerText = text;
-  document.getElementById("historyList").prepend(div);
 }
 
 window.copyText = function(){
