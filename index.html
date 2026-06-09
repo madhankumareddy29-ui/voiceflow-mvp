@@ -32,6 +32,7 @@
     <input id="password" type="password" placeholder="Password"/>
     <button class="blue" id="signupBtn" onclick="signup()">Signup</button>
     <button class="green" id="loginBtn" onclick="login()">Login</button>
+
     <button class="red" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
     <button class="purple" id="upgradeBtn">🚀 Upgrade Pro</button>
   </div>
@@ -76,14 +77,21 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+sendPasswordResetEmail,
+onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   getFirestore,
-  doc,
-  setDoc,
-  getDoc
+doc,
+setDoc,
+getDoc,
+collection,
+addDoc,
+query,
+orderBy,
+limit,
+getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const API_BASE = "https://voiceflow-mvp.onrender.com";
@@ -126,6 +134,8 @@ function setAuthUI(isLoggedIn){
   document.getElementById("signupBtn").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("loginBtn").style.display = isLoggedIn ? "none" : "inline-block";
   document.getElementById("logoutBtn").style.display = isLoggedIn ? "inline-block" : "none";
+document.getElementById("forgotBtn").style.display =
+  isLoggedIn ? "none" : "inline-block";
 document.getElementById("appControls").style.display =
   isLoggedIn ? "flex" : "none";
 
@@ -197,6 +207,22 @@ window.login = async function(){
   try{
     await signInWithEmailAndPassword(auth,email,password);
     alert("Login successful!");
+  }catch(err){
+    alert(err.message);
+  }
+}
+
+window.forgotPassword = async function(){
+  const email = document.getElementById("email").value.trim();
+
+  if(!email){
+    alert("Please enter your email first.");
+    return;
+  }
+
+  try{
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset email sent. Check your inbox.");
   }catch(err){
     alert(err.message);
   }
