@@ -220,10 +220,11 @@ clearHistory();
 onAuthStateChanged(auth, async (user)=>{
   if(user){
 
-  clearHistory();
+    document.getElementById("status").innerHTML = "Ready";
 
-  setAuthUI(true);
+    clearHistory();
 
+    setAuthUI(true);
     document.getElementById("userStatus").innerText =
       "Logged in: " + user.email;
 
