@@ -64,12 +64,7 @@
   <div id="status">Ready</div>
   <textarea id="output"></textarea>
 
-  <div class="history" id="historySection">
-    <h2>Recent Rewrites</h2>
-    <div id="historyList"></div>
-  </div>
-</div>
-
+ 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
@@ -251,7 +246,6 @@ onAuthStateChanged(auth, async (user)=>{
 
     document.getElementById("status").innerHTML = "Ready";
 
-    clearHistory();
 
     setAuthUI(true);
     document.getElementById("userStatus").innerText =
@@ -386,7 +380,6 @@ window.professionalRewrite = async function(){
     document.getElementById("status").innerHTML =
       "✅ AI rewrite complete!";
 
-    addToHistory(data.result);
 
   }catch(err){
     console.error(err);
