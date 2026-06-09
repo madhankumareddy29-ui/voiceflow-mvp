@@ -226,7 +226,9 @@ onAuthStateChanged(auth, async (user)=>{
 
     setAuthUI(true);
     document.getElementById("userStatus").innerText =
-      "Logged in: " + user.email;
+  "Logged in: " + user.email;
+
+document.getElementById("status").innerHTML = "Ready";
 
     const uidRef = doc(db,"users",user.uid);
     const emailRef = doc(db,"users",user.email);
