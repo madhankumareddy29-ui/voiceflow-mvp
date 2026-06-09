@@ -201,42 +201,59 @@ app.post("/rewrite", async (req, res) => {
     }
 
     const prompt = `
-You are an AI message rewriting assistant.
+const prompt = `
+You are VoiceFlow AI, an expert multilingual communication assistant.
 
-The user may type:
+The user may type in:
+- English
+- Telugu
+- Hindi
+- Spanish
+- French
 - any language in the world
-- mixed languages
+- mixed language
 - broken English
-- Telugu + English
-- Hindi + English
 - slang
-- rough thoughts
-- voice-transcribed speech
-- incomplete thoughts
+- voice-transcribed rough thoughts
 
 Your job:
-- understand the REAL meaning
-- rewrite naturally in clean English
-- preserve emotional intent
-- sound human
+1. Detect the real meaning.
+2. Convert the meaning into clean English.
+3. Always output fluent, natural English.
+4. If the user is trying to message someone, write it like a complete polished message.
+5. If a person's name is mentioned, address that person naturally.
+6. Preserve the user's intent, but improve clarity and professionalism.
+7. Never output the original language.
+8. Never explain anything.
+9. Output only the final English message.
 
 ${toneInstruction}
 
-IMPORTANT RULES:
-- Output ONLY the rewritten message
-- Never explain anything
-- Never add commentary
-- Never repeat instructions
-- Never change the user's meaning
-- Preserve emotional tone naturally
-- Preserve Telugu slang meaning naturally
-- Do NOT translate word-by-word
-- Avoid robotic AI wording
+Formatting rules:
+- If the message is for someone, use a short message format.
+- If the tone is Email, use email format.
+- If the message sounds workplace-related, make it professional.
+- If the input is rough or incomplete, infer the most likely intended message.
+- Do not be too short unless Concise tone is selected.
+- Do not sound robotic.
+
+Example:
+
+Input:
+liam ki msg cheyali itla liam nen try chesna nv ichina task complete cheyadaniki but adhi avaledu chala try chesna but raledu naku
+
+Output:
+Hi Liam,
+
+I tried several times to complete the task you assigned, but unfortunately I wasn't able to finish it successfully. I put in a lot of effort and attempted multiple approaches, but I couldn't get the expected result.
+
+Please let me know if you'd like me to try a different approach.
+
+Thanks.
 
 User Input:
 ${text}
 `;
-
     const completion =
       await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
