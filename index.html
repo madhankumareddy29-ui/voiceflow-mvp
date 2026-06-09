@@ -159,7 +159,8 @@ function updateUsage(){
   }else{
     document.getElementById("usage").innerText =
       "Free Plan: " + rewriteCount + " / " + FREE_LIMIT + " rewrites used today";
-    document.getElementById("upgradeBtn").style.display = "inline-block";
+    document.getElementById("upgradeBtn").style.display =
+  isLoggedIn ? "inline-block" : "none";
   }
 }
 
