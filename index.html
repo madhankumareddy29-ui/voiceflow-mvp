@@ -29,7 +29,23 @@
 
   <div class="controls">
     <input id="email" placeholder="Email"/>
-    <input id="password" type="password" placeholder="Password"/>
+   <div style="position:relative; display:inline-block;">
+  <input id="password" type="password" placeholder="Password"/>
+
+  <span
+    onclick="togglePassword()"
+    style="
+      position:absolute;
+      right:15px;
+      top:50%;
+      transform:translateY(-50%);
+      cursor:pointer;
+      font-size:20px;
+    "
+  >
+    👁️
+  </span>
+</div>
    <button class="blue" id="signupBtn" onclick="signup()">Signup</button>
 <button class="green" id="loginBtn" onclick="login()">Login</button>
 <button class="gray" id="forgotBtn" onclick="forgotPassword()">Forgot Password?</button>
@@ -416,7 +432,17 @@ window.copyText = function(){
   navigator.clipboard.writeText(document.getElementById("output").value);
   document.getElementById("status").innerHTML = "📋 Copied!";
 }
+window.togglePassword = function() {
 
+  const pwd = document.getElementById("password");
+
+  if (pwd.type === "password") {
+    pwd.type = "text";
+  } else {
+    pwd.type = "password";
+  }
+
+}
 window.startRecording = async function(){
   document.getElementById("output").value = "";
 
